@@ -1,6 +1,6 @@
-package ch.unil.doplab.studdybuddy;
+package ch.unil.doplab.studybuddy;
 
-import ch.unil.doplab.studdybuddy.ui.StudentBean;
+import ch.unil.doplab.studybuddy.ui.StudentBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.client.Client;
@@ -9,13 +9,13 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.UUID;
 
 @ApplicationScoped
-public class StuddyBuddyService {
-    private static final String BASE_URL = "http://localhost:8080/StudyBuddy-1.0-SNAPSHOT/api";
+public class StudyBuddyService {
+    private static final String BASE_URL = "http://localhost:8080/StudyBuddyService-1.0-SNAPSHOT/api";
     private WebTarget studentTarget;
 
     @PostConstruct
@@ -34,7 +34,7 @@ public class StuddyBuddyService {
 
     public boolean setStudent(StudentBean student) {
         var response = studentTarget
-                .path(student.getId())
+                .path(student.getId().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.entity(student, MediaType.APPLICATION_JSON));
         return response.getStatus() == 200;
@@ -47,7 +47,7 @@ public class StuddyBuddyService {
     }
 
     public StudentBean addStudent(StudentBean student) {
-        student.setId(null);  // To make sure the id is not set and avoid bug related to ill-formed UUID on server side
+        student.setUUID(null);  // To make sure the id is not set and avoid bug related to ill-formed UUID on server side
         var response = studentTarget
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(student, MediaType.APPLICATION_JSON));

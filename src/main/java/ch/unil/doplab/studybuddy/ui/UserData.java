@@ -1,13 +1,12 @@
-package ch.unil.doplab.studdybuddy.ui;
+package ch.unil.doplab.studybuddy.ui;
 
-import ch.unil.doplab.studdybuddy.StuddyBuddyService;
+import ch.unil.doplab.studybuddy.StudyBuddyService;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @SessionScoped
 @Named
@@ -16,7 +15,7 @@ public class UserData implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    StuddyBuddyService theService;
+    StudyBuddyService theService;
 
     private List<StudentBean> students;
 

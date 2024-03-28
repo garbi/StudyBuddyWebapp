@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ch.unil.doplab</groupId>
-    <artifactId>StuddyBuddyUI</artifactId>
+    <artifactId>StudyBuddyWebapp</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>StuddyBuddyUI</name>
+    <name>StudyBuddyWebapp</name>
     <packaging>war</packaging>
 
     <properties>
@@ -37,9 +37,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>10.0.0</version>
+            <groupId>ch.unil.doplab.studybuddy</groupId>
+            <artifactId>StudyBuddyDomain</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
