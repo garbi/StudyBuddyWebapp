@@ -1,5 +1,6 @@
 package ch.unil.doplab.studybuddy;
 
+import ch.unil.doplab.studybuddy.domain.Student;
 import ch.unil.doplab.studybuddy.ui.StudentBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -9,7 +10,9 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,36 +28,36 @@ public class StudyBuddyService {
         studentTarget = client.target(BASE_URL).path("students");
     }
 
-    public StudentBean getStudent(String id) {
+    public Student getStudent(String id) {
         return studentTarget
                 .path(id.toString())
                 .request()
-                .get(StudentBean.class);
+                .get(Student.class);
     }
 
-    public boolean setStudent(StudentBean student) {
+    public boolean setStudent(Student student) {
         var response = studentTarget
-                .path(student.getId().toString())
+                .path(student.getUUID().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.entity(student, MediaType.APPLICATION_JSON));
         return response.getStatus() == 200;
     }
 
-    public List<StudentBean> getAllStudents() {
+    public List<Student> getAllStudents() {
         return studentTarget
                 .request(MediaType.APPLICATION_JSON)
-                .get(new GenericType<List<StudentBean>>() {});
+                .get(new GenericType<List<Student>>() {});
     }
 
-    public StudentBean addStudent(StudentBean student) {
+    public Student addStudent(Student student) {
         student.setUUID(null);  // To make sure the id is not set and avoid bug related to ill-formed UUID on server side
         var response = studentTarget
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(student, MediaType.APPLICATION_JSON));
-        StudentBean newlyCreatedStudent = null;
+        Student newlyCreatedStudent = null;
         if (response.getStatus() == 200 && response.hasEntity()) {
-            newlyCreatedStudent = response.readEntity(StudentBean.class);
-            student.setId(newlyCreatedStudent.getId());
+            newlyCreatedStudent = response.readEntity(Student.class);
+            student.setUUID(newlyCreatedStudent.getUUID());
         }
         return newlyCreatedStudent;
     }
