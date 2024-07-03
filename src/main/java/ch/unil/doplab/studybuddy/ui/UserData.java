@@ -6,9 +6,8 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SessionScoped
 @Named
@@ -20,10 +19,29 @@ public class UserData implements java.io.Serializable {
     StudyBuddyService theService;
 
     private List<Student> students;
+    private Set<String> languages;
 
     public UserData() {
         this.students = new ArrayList<Student>();
+        this.languages = Arrays.stream(Locale.getISOLanguages())
+                .map(Locale::new)
+                .map(Locale::getDisplayLanguage)
+                .collect(Collectors.toCollection(TreeSet::new));
+
         System.out.println("UserData created: " + this.hashCode());
+    }
+
+    public Set<String> getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Set<String> languages) {
+        this.languages = languages;
+    }
+
+    public void reset() {
+        theService.resetService();
+        loadStudents();
     }
 
     public List<Student> getStudents() {

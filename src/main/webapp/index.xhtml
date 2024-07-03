@@ -6,11 +6,15 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <f:view>
-    <h:outputLabel value="StuddyBuddyWebapp Successfully Deployed."/>
+<!--    <h:outputLabel value="StuddyBuddyWebapp Successfully Deployed."/>-->
+<!--    <br/>-->
+    <h1>Service Management</h1>
+    <h:form>
+        <h:commandButton action="#{userData.reset()}" value="RESET SERVICE"/>
+    </h:form>
 
-    <br/>
-
-    <h1>Admin API</h1>
+    <h1>Student Management</h1>
+    <h2>Student API</h2>
     <ul>
         <li><a href="GetAllStudents.xhtml" target="_blank" rel="noopener noreferrer">Get all students </a></li>
         <li><a href="GetStudent.xhtml" target="_blank" rel="noopener noreferrer">Get student by id </a></li>
@@ -20,20 +24,20 @@
         <li><a href="templates/CommonTemplate.xhtml" target="_blank" rel="noopener noreferrer">Common template</a></li>
     </ul>
 
-    <h1>Student API</h1>
+    <h2>Student UI</h2>
     <ul>
         <li><a href="LoadStudent.xhtml" target="_blank" rel="noopener noreferrer">Load student</a></li>
-        <li><a href="templates/StudentTemplate.xhtml" target="_blank" rel="noopener noreferrer">Student template</a></li>
+        <li><a href="templates/StudentTemplate.xhtml" target="_blank" rel="noopener noreferrer">Student template</a>
+        </li>
         <li><a href="StudentProfile.xhtml" target="_blank" rel="noopener noreferrer">Student profile</a></li>
     </ul>
 
-
-    <h1>Teacher API</h1>
+    <h1>Teacher Management</h1>
     <ul>
-        <li><a href="templates/TeacherTemplate.xhtml" target="_blank" rel="noopener noreferrer">Teacher template</a></li>
+        <li><a href="templates/TeacherTemplate.xhtml" target="_blank" rel="noopener noreferrer">Teacher template</a>
+        </li>
         <li><a href="TeacherProfile.xhtml" target="_blank" rel="noopener noreferrer">Teacher profile</a></li>
     </ul>
-
 </f:view>
 
 </html>

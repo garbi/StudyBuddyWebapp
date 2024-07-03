@@ -22,6 +22,7 @@ public class StudentBean extends Student implements Serializable {
     // so that we can compare it with the current student in the form
     private Student theStudent;
     private boolean changed;
+    private String selectedLanguage;
 
     @Inject
     StudyBuddyService theService;
@@ -33,7 +34,16 @@ public class StudentBean extends Student implements Serializable {
     public StudentBean(UUID id, String firstName, String lastName, String email, String username) {
         super(id, firstName, lastName, email, username);
         theStudent = new Student(id, firstName, lastName, email, username);
+        selectedLanguage = null;
         changed = false;
+    }
+
+    public String getSelectedLanguage() {
+        return selectedLanguage;
+    }
+
+    public void setSelectedLanguage(String selectedLanguage) {
+        this.selectedLanguage = selectedLanguage;
     }
 
     public boolean isButtonDisabled() {
@@ -55,9 +65,17 @@ public class StudentBean extends Student implements Serializable {
 
     public void deleteLanguage(String language) {
         this.removeLanguage(language);
-        updateStudent();
+        theStudent.removeLanguage(language);
+        theService.setStudent(theStudent);
     }
 
+    public void addSelectedLanguage() {
+        if (selectedLanguage != null) {
+            this.addLanguage(selectedLanguage);
+            theStudent.addLanguage(selectedLanguage);
+            theService.setStudent(theStudent);
+        }
+    }
 
     public void loadStudent() {
         var id = this.getUUID();

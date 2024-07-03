@@ -20,13 +20,26 @@ import java.util.UUID;
 public class StudyBuddyService {
     private static final String BASE_URL = "http://localhost:8080/StudyBuddyService-1.0-SNAPSHOT/api";
     private WebTarget studentTarget;
+    private WebTarget serviceTarget;
 
     @PostConstruct
     public void init() {
-        System.err.println("StuddyBuddyService created: " + this.hashCode());
+        System.out.println("StuddyBuddyService created: " + this.hashCode());
         Client client = ClientBuilder.newClient();
+        serviceTarget = client.target(BASE_URL).path("service");
         studentTarget = client.target(BASE_URL).path("students");
     }
+
+    public void resetService() {
+        String response = serviceTarget
+                .path("reset")
+                .request()
+                .get(String.class);
+    }
+
+    /*
+     * Student operations
+     */
 
     public Student getStudent(String id) {
         return studentTarget
