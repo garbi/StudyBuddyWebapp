@@ -1,6 +1,7 @@
 package ch.unil.doplab.studybuddy.ui;
 
 import ch.unil.doplab.studybuddy.StudyBuddyService;
+import ch.unil.doplab.studybuddy.domain.Level;
 import ch.unil.doplab.studybuddy.domain.Student;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
@@ -20,6 +21,7 @@ public class UserData implements java.io.Serializable {
 
     private List<Student> students;
     private Set<String> languages;
+    private List<Level> levels;
 
     public UserData() {
         this.students = new ArrayList<Student>();
@@ -27,7 +29,7 @@ public class UserData implements java.io.Serializable {
                 .map(Locale::new)
                 .map(Locale::getDisplayLanguage)
                 .collect(Collectors.toCollection(TreeSet::new));
-
+        this.levels = Arrays.asList(Level.values());
         System.out.println("UserData created: " + this.hashCode());
     }
 
@@ -44,8 +46,16 @@ public class UserData implements java.io.Serializable {
         loadStudents();
     }
 
+    public List<String> getTopics() {
+        return theService.getTopics();
+    }
+
     public List<Student> getStudents() {
         return students;
+    }
+
+    public List<Level> getLevels() {
+        return levels;
     }
 
     public void loadStudents() {

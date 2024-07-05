@@ -71,7 +71,7 @@
         <p:outputLabel for="@next" value="Spoken Languages"/>
         <h:form id="languageForm">
             <p:dataTable id="languages"  value="#{studentBean.languages}" var="lang" sortBy="#{lang}" sortOrder="ascending">
-                <p:column sortable="false">
+                <p:column headerText="Language" sortable="false">
                     <h:outputText value="#{lang}"/>
                 </p:column>
                 <p:column sortable="false">
@@ -84,7 +84,7 @@
                              update="languages"/>
             <p:spacer width="10"/>
             <p:selectOneMenu id="dropdown" value="#{studentBean.selectedLanguage}">
-                <f:selectItem itemLabel="Select One" itemValue=""/>
+                <f:selectItem itemLabel="Select language..." itemValue=""/>
                 <f:selectItems value="#{userData.languages}"/>
             </p:selectOneMenu>
         </h:form>

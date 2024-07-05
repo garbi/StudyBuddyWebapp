@@ -1,7 +1,9 @@
 package ch.unil.doplab.studybuddy.ui;
 
 import ch.unil.doplab.studybuddy.StudyBuddyService;
+import ch.unil.doplab.studybuddy.domain.Level;
 import ch.unil.doplab.studybuddy.domain.Student;
+import ch.unil.doplab.studybuddy.domain.Topic;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -23,6 +25,8 @@ public class StudentBean extends Student implements Serializable {
     private Student theStudent;
     private boolean changed;
     private String selectedLanguage;
+    private String selectedTopic;
+    private Level selectedLevel;
 
     @Inject
     StudyBuddyService theService;
@@ -44,6 +48,22 @@ public class StudentBean extends Student implements Serializable {
 
     public void setSelectedLanguage(String selectedLanguage) {
         this.selectedLanguage = selectedLanguage;
+    }
+
+    public String getSelectedTopic() {
+        return selectedTopic;
+    }
+
+    public void setSelectedTopic(String selectedTopic) {
+        this.selectedTopic = selectedTopic;
+    }
+
+    public Level getSelectedLevel() {
+        return selectedLevel;
+    }
+
+    public void setSelectedLevel(Level selectedLevel) {
+        this.selectedLevel = selectedLevel;
     }
 
     public boolean isButtonDisabled() {
@@ -73,6 +93,22 @@ public class StudentBean extends Student implements Serializable {
         if (selectedLanguage != null) {
             this.addLanguage(selectedLanguage);
             theStudent.addLanguage(selectedLanguage);
+            theService.setStudent(theStudent);
+        }
+    }
+
+    // TODO: CONTINUE FROM HERE
+    public void deleteInterest(String topic) {
+        this.removeInterest(topic);
+        theStudent.removeInterest(topic);
+        theService.setStudent(theStudent);
+    }
+
+    public void addSelectedInterest() {
+        if (selectedTopic != null && selectedLevel != null) {
+            var topic = new Topic(selectedTopic, selectedLevel);
+            this.addInterest(topic);
+            theStudent.addInterest(topic);
             theService.setStudent(theStudent);
         }
     }

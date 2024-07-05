@@ -14,9 +14,8 @@
     <ui:define name="section-title">Student | #{studentBean.fullName} | Learning</ui:define>
 
     <ui:define name="section-content">
-
         <p:outputLabel for="@next" value="Booked Lessons"/>
-        <p:dataTable var="lesson" value="#{studentBean.lessons}">
+        <p:dataTable id="lessons" var="lesson" value="#{studentBean.lessons}">
             <p:column headerText="Date">
                 <h:outputText value="#{lesson.date}">
                     <f:convertDateTime pattern="E, dd MMM yyyy"/>
@@ -28,16 +27,43 @@
                 </h:outputText>
             </p:column>
             <p:column headerText="Topic">
-                <h:outputText value="#{lesson.topic.title}" />
+                <h:outputText value="#{lesson.topic.title}"/>
             </p:column>
             <p:column headerText="Level">
-                <h:outputText value="#{lesson.topic.levels.iterator().next().capitalize()}" />
+                <h:outputText value="#{lesson.topic.levels.iterator().next()}"/>
             </p:column>
             <p:column headerText="Teacher">
-                <h:outputText value="#{lesson.teacherName}" />
+                <h:outputText value="#{lesson.teacherName}"/>
             </p:column>
         </p:dataTable>
         <br/>
+        <p:outputLabel for="@next" value="Topic Interests"/>
+        <h:form id="interestForm">
+            <p:dataTable id="interests" var="topic" value="#{studentBean.topics}">
+                <p:column headerText="Topic">
+                    <h:outputText value="#{topic.title}"/>
+                </p:column>
+                <p:column headerText="Level">
+                    <h:outputText value="#{topic.levels.iterator().next()}"/>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton value="Delete" actionListener="#{studentBean.deleteInterest(topic.title)}"
+                                     update="interests"/>
+                </p:column>
+            </p:dataTable>
+            <p:commandButton value="Add" actionListener="#{studentBean.addSelectedInterest}"
+                             update="interests"/>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownTopic" value="#{studentBean.selectedTopic}">
+                <f:selectItem itemLabel="Select topic..." itemValue=""/>
+                <f:selectItems value="#{userData.topics}"/>
+            </p:selectOneMenu>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownLevel" value="#{studentBean.selectedLevel}">
+                <f:selectItem itemLabel="Select level..." itemValue=""/>
+                <f:selectItems value="#{userData.levels}"/>
+            </p:selectOneMenu>
+        </h:form>
     </ui:define>
 
 </ui:composition>

@@ -37,15 +37,24 @@ public class StudyBuddyService {
                 .get(String.class);
     }
 
+    public List<String> getTopics() {
+        var topics = serviceTarget
+                .path("topics")
+                .request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<List<String>>() {});
+        return topics;
+    }
+
     /*
      * Student operations
      */
 
     public Student getStudent(String id) {
-        return studentTarget
+        var student = studentTarget
                 .path(id.toString())
                 .request()
                 .get(Student.class);
+         return student;
     }
 
     public boolean setStudent(Student student) {
@@ -57,9 +66,10 @@ public class StudyBuddyService {
     }
 
     public List<Student> getAllStudents() {
-        return studentTarget
+        var students = studentTarget
                 .request(MediaType.APPLICATION_JSON)
                 .get(new GenericType<List<Student>>() {});
+        return students;
     }
 
     public Student addStudent(Student student) {
