@@ -1,24 +1,24 @@
 package ch.unil.doplab.studybuddy.ui;
 
 import ch.unil.doplab.studybuddy.StudyBuddyService;
-import ch.unil.doplab.studybuddy.domain.Level;
-import ch.unil.doplab.studybuddy.domain.Student;
-import ch.unil.doplab.studybuddy.domain.Topic;
-import jakarta.enterprise.context.RequestScoped;
+import ch.unil.doplab.studybuddy.domain.*;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SessionScoped
 @Named
 public class StudentBean extends Student implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     // Field theStudent always contains the current student as know on the server
     // so that we can compare it with the current student in the form
@@ -27,6 +27,17 @@ public class StudentBean extends Student implements Serializable {
     private String selectedLanguage;
     private String selectedTopic;
     private Level selectedLevel;
+    private int selectedAmount;
+    Map<UUID, Set<Affinity>> allAffinities;
+    private List<Affinity> selectedAffinities;
+    private boolean showSelectedAffinities;
+    private String selectedAffinityTopic;
+    private Level selectedAffinityLevel;
+    private Affinity selectedAffinity;
+    private SortedSet<LocalDateTime> selectedTimeslots;
+    private boolean showSelectedTimeslots;
+    private String errorMessage;
+
 
     @Inject
     StudyBuddyService theService;
@@ -37,9 +48,37 @@ public class StudentBean extends Student implements Serializable {
 
     public StudentBean(UUID id, String firstName, String lastName, String email, String username) {
         super(id, firstName, lastName, email, username);
+        init();
         theStudent = new Student(id, firstName, lastName, email, username);
-        selectedLanguage = null;
+        selectedAmount = 0;
+    }
+
+    public void init() {
+        theStudent = null;
         changed = false;
+        selectedLanguage = null;
+        selectedTopic = null;
+        selectedLevel = null;
+        allAffinities = null;
+        selectedAffinities = null;
+        showSelectedAffinities = false;
+        selectedAffinityTopic = null;
+        selectedAffinityLevel = null;
+        selectedAffinity = null;
+        selectedTimeslots = null;
+        showSelectedTimeslots = false;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public int getSelectedAmount() {
+        return selectedAmount;
+    }
+
+    public void setSelectedAmount(int selectedAmount) {
+        this.selectedAmount = selectedAmount;
     }
 
     public String getSelectedLanguage() {
@@ -70,6 +109,18 @@ public class StudentBean extends Student implements Serializable {
         return !changed;
     }
 
+    public String getSelectedAffinityTopic() {
+        return selectedAffinityTopic;
+    }
+
+    public Level getSelectedAffinityLevel() {
+        return selectedAffinityLevel;
+    }
+
+    public List<Affinity> getSelectedAffinities() {
+        return selectedAffinities;
+    }
+
     public void checkIfChanged() {
         boolean firstNameChanged = !theStudent.getFirstName().equals(this.getFirstName());
         boolean lastNameChanged = !theStudent.getLastName().equals(this.getLastName());
@@ -78,7 +129,7 @@ public class StudentBean extends Student implements Serializable {
         changed = firstNameChanged || lastNameChanged || emailChanged || usernameChanged;
     }
 
-    public void reset() {
+    public void undoChanges() {
         this.replaceWith(theStudent);
         changed = false;
     }
@@ -97,7 +148,14 @@ public class StudentBean extends Student implements Serializable {
         }
     }
 
-    // TODO: CONTINUE FROM HERE
+    public void addSelectedAmount() {
+        if (selectedAmount > 0) {
+            this.deposit(selectedAmount);
+            theStudent.deposit(selectedAmount);
+            theService.setStudent(theStudent);
+        }
+    }
+
     public void deleteInterest(String topic) {
         this.removeInterest(topic);
         theStudent.removeInterest(topic);
@@ -111,6 +169,61 @@ public class StudentBean extends Student implements Serializable {
             theStudent.addInterest(topic);
             theService.setStudent(theStudent);
         }
+    }
+
+    public void updateAffinities(String topic) {
+        allAffinities = theService.findAffinitiesWith(this.getUUID());
+        selectedAffinityTopic = topic;
+        Topic interest = getTopics().stream().
+                filter(t -> t.getTitle().equals(topic)).
+                findFirst().get();
+        this.selectedAffinityLevel = interest.getLevels().stream().findFirst().get();
+        selectedAffinities = allAffinities.values().stream()
+                .flatMap(Set::stream)
+                .filter(affinity -> affinity.getTitle().equals(topic))
+                .sorted()
+                .collect(Collectors.toList());
+        showSelectedAffinities = !selectedAffinities.isEmpty();
+        showSelectedTimeslots = false;
+    }
+
+    public boolean isShowSelectedAffinities() {
+        return showSelectedAffinities;
+    }
+
+    public Affinity getSelectedAffinity() {
+        return selectedAffinity;
+    }
+
+    public void loadTimeslotsOf(Affinity affinity) {
+        selectedAffinity = affinity;
+        selectedTimeslots = theService.getTimeslotsOf(selectedAffinity.getTeacherID());
+        showSelectedTimeslots = !selectedTimeslots.isEmpty();
+    }
+
+    public boolean isShowSelectedTimeslots() {
+        return showSelectedTimeslots;
+    }
+
+    public SortedSet<LocalDateTime> getSelectedTimeslots() {
+        return selectedTimeslots;
+    }
+
+    public void bookLesson(LocalDateTime timeslot) {
+        System.out.println("-----------------> Booking lesson on " + selectedAffinity.getTitle() + " with " + selectedAffinity.getTeacherName() + " at " + timeslot);
+        var lesson = new Lesson(timeslot, selectedAffinity);
+        try {
+            theService.bookLesson(lesson);
+            updateAffinities(selectedAffinity.getTitle());
+            loadStudent();
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+            PrimeFaces.current().executeScript("PF('errorDialog').show();");
+        }
+    }
+
+    public Date convertToDate(LocalDateTime timeslot) {
+        return Date.from(timeslot.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public void loadStudent() {

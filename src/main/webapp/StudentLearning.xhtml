@@ -27,16 +27,17 @@
                 </h:outputText>
             </p:column>
             <p:column headerText="Topic">
-                <h:outputText value="#{lesson.topic.title}"/>
+                <h:outputText value="#{lesson.title}"/>
             </p:column>
             <p:column headerText="Level">
-                <h:outputText value="#{lesson.topic.levels.iterator().next()}"/>
+                <h:outputText value="#{lesson.level}"/>
             </p:column>
             <p:column headerText="Teacher">
                 <h:outputText value="#{lesson.teacherName}"/>
             </p:column>
         </p:dataTable>
         <br/>
+
         <p:outputLabel for="@next" value="Topic Interests"/>
         <h:form id="interestForm">
             <p:dataTable id="interests" var="topic" value="#{studentBean.topics}">
@@ -45,6 +46,10 @@
                 </p:column>
                 <p:column headerText="Level">
                     <h:outputText value="#{topic.levels.iterator().next()}"/>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton id="searchAffinities" value="Find courses" actionListener="#{studentBean.updateAffinities(topic.title)}"
+                                     update=":teacherAffinities, :teacherTimeSlots"/>
                 </p:column>
                 <p:column sortable="false">
                     <p:commandButton value="Delete" actionListener="#{studentBean.deleteInterest(topic.title)}"
@@ -64,6 +69,71 @@
                 <f:selectItems value="#{userData.levels}"/>
             </p:selectOneMenu>
         </h:form>
+        <br/>
+
+        <h:panelGroup id="teacherAffinities">
+            <p:outputLabel value="#{studentBean.selectedAffinityLevel} #{studentBean.selectedAffinityTopic} Courses" rendered="#{studentBean.showSelectedAffinities}"/>
+            <p:dataTable id="affinities" var="affinity" value="#{studentBean.selectedAffinities}" rendered="#{studentBean.showSelectedAffinities}">
+                <p:column headerText="Course Description">
+                    <h:outputText value="#{affinity.description}"/>
+                </p:column>
+                <p:column headerText="Teacher Name">
+                    <h:outputText value="#{affinity.teacherName}"/>
+                </p:column>
+                <p:column headerText="Biography">
+                    <h:outputText value="#{affinity.teacherDescription}"/>
+                </p:column>
+                <p:column headerText="Email">
+                    <h:outputLink value="mailto:#{affinity.teacherEmail}?subject=#{studentBean.selectedAffinityLevel} #{studentBean.selectedAffinityTopic} Courses">
+                        <h:outputText value="#{affinity.teacherEmail}"/>
+                    </h:outputLink>
+                </p:column>
+                <p:column headerText="Price">
+                    <h:outputText value="#{affinity.teacherHourlyRate} CHF/Hour"/>
+                </p:column>
+                <p:column headerText="Rating">
+                    <h:outputText value="#{affinity.formattedTeacherRating}"/>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton id="seeTimeslots" value="See Timeslots" actionListener="#{studentBean.loadTimeslotsOf(affinity)}"
+                                     update=":teacherTimeSlots"/>
+                </p:column>
+            </p:dataTable>
+        </h:panelGroup>
+        <br/>
+
+        <h:panelGroup id="teacherTimeSlots">
+            <p:outputLabel value="Available timeslots of #{studentBean.selectedAffinity.teacherName}" rendered="#{studentBean.showSelectedTimeslots}"/>
+
+            <p:dataTable id="timeslots" var="timeslot" value="#{studentBean.selectedTimeslots}" rendered="#{studentBean.showSelectedTimeslots}">
+
+                <p:column headerText="Date">
+                    <h:outputText value="#{studentBean.convertToDate(timeslot)}">
+                        <f:convertDateTime pattern="E, dd MMM yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Time">
+                    <h:outputText value="#{studentBean.convertToDate(timeslot)}">
+                        <f:convertDateTime pattern="HH:mm"/>
+                    </h:outputText>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton id="bookLesson" value="Book Lesson" actionListener="#{studentBean.bookLesson(timeslot)}"
+                                     update=":teacherTimeSlots, :lessons"/>
+                    <p:dialog id="errorDialog"
+                              widgetVar="errorDialog"
+                              header="Booking impossible"
+                              modal="true"
+                              resizable="false"
+                              width="250"
+                              height="50">
+                        <h:outputText id="errorMessage" value="#{studentBean.errorMessage}" />
+                    </p:dialog>
+                </p:column>
+            </p:dataTable>
+
+        </h:panelGroup>
+
     </ui:define>
 
 </ui:composition>

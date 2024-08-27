@@ -64,10 +64,27 @@
                              action="#{studentBean.updateStudent()}"
                              update="basicInfoForm"/>
             <p:spacer width="10"/>
-            <p:commandButton id="resetButton" value="Reset" actionListener="#{studentBean.reset()}" immediate="true"
+            <p:commandButton id="undoButton" value="Undo" actionListener="#{studentBean.undoChanges()}" immediate="true"
                              update="basicInfoForm" oncomplete="window.location.reload();"/>
         </h:form>
         <br/>
+
+        <h:form id="balance">
+            <p:outputLabel for="@next" value="Balance"/>
+            <br/>
+            <h:outputLabel value="CHF #{studentBean.balance}" style="font-size: 20px;"/>
+            <br/>
+            <p:commandButton value="Add" actionListener="#{studentBean.addSelectedAmount}"
+                             update="balance"/>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownAmount" value="#{studentBean.selectedAmount}">
+                <f:selectItem itemLabel="Select amount..." itemValue=""/>
+                <f:selectItems value="#{userData.amounts}"/>
+            </p:selectOneMenu>
+
+        </h:form>
+        <br/>
+
         <p:outputLabel for="@next" value="Spoken Languages"/>
         <h:form id="languageForm">
             <p:dataTable id="languages"  value="#{studentBean.languages}" var="lang" sortBy="#{lang}" sortOrder="ascending">
@@ -83,7 +100,7 @@
             <p:commandButton value="Add" actionListener="#{studentBean.addSelectedLanguage}"
                              update="languages"/>
             <p:spacer width="10"/>
-            <p:selectOneMenu id="dropdown" value="#{studentBean.selectedLanguage}">
+            <p:selectOneMenu id="dropdownLanguage" value="#{studentBean.selectedLanguage}">
                 <f:selectItem itemLabel="Select language..." itemValue=""/>
                 <f:selectItems value="#{userData.languages}"/>
             </p:selectOneMenu>

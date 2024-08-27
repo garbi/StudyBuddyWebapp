@@ -6,10 +6,13 @@ import ch.unil.doplab.studybuddy.domain.Student;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import org.primefaces.component.tree.Tree;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: consider making it a @ApplicationScoped bean
 @SessionScoped
 @Named
 public class UserData implements java.io.Serializable {
@@ -22,6 +25,9 @@ public class UserData implements java.io.Serializable {
     private List<Student> students;
     private Set<String> languages;
     private List<Level> levels;
+    private Set<Integer> amounts;
+
+
 
     public UserData() {
         this.students = new ArrayList<Student>();
@@ -30,6 +36,7 @@ public class UserData implements java.io.Serializable {
                 .map(Locale::getDisplayLanguage)
                 .collect(Collectors.toCollection(TreeSet::new));
         this.levels = Arrays.asList(Level.values());
+        this.amounts = new TreeSet<>(Arrays.asList(50, 100, 150, 200, 250, 300));
         System.out.println("UserData created: " + this.hashCode());
     }
 
@@ -39,6 +46,14 @@ public class UserData implements java.io.Serializable {
 
     public void setLanguages(Set<String> languages) {
         this.languages = languages;
+    }
+
+    public Set<Integer> getAmounts() {
+        return amounts;
+    }
+
+    public void setAmounts(Set<Integer> amounts) {
+        this.amounts = amounts;
     }
 
     public void reset() {

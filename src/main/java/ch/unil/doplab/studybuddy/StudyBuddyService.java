@@ -1,7 +1,6 @@
 package ch.unil.doplab.studybuddy;
 
-import ch.unil.doplab.studybuddy.domain.Student;
-import ch.unil.doplab.studybuddy.ui.StudentBean;
+import ch.unil.doplab.studybuddy.domain.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.client.Client;
@@ -12,22 +11,23 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @ApplicationScoped
 public class StudyBuddyService {
     private static final String BASE_URL = "http://localhost:8080/StudyBuddyService-1.0-SNAPSHOT/api";
     private WebTarget studentTarget;
+    private WebTarget teacherTarget;
     private WebTarget serviceTarget;
 
     @PostConstruct
     public void init() {
         System.out.println("StuddyBuddyService created: " + this.hashCode());
         Client client = ClientBuilder.newClient();
-        serviceTarget = client.target(BASE_URL).path("service");
         studentTarget = client.target(BASE_URL).path("students");
+        teacherTarget = client.target(BASE_URL).path("teachers");
+        serviceTarget = client.target(BASE_URL).path("service");
     }
 
     public void resetService() {
@@ -41,7 +41,8 @@ public class StudyBuddyService {
         var topics = serviceTarget
                 .path("topics")
                 .request(MediaType.APPLICATION_JSON)
-                .get(new GenericType<List<String>>() {});
+                .get(new GenericType<List<String>>() {
+                });
         return topics;
     }
 
@@ -54,7 +55,7 @@ public class StudyBuddyService {
                 .path(id.toString())
                 .request()
                 .get(Student.class);
-         return student;
+        return student;
     }
 
     public boolean setStudent(Student student) {
@@ -68,7 +69,8 @@ public class StudyBuddyService {
     public List<Student> getAllStudents() {
         var students = studentTarget
                 .request(MediaType.APPLICATION_JSON)
-                .get(new GenericType<List<Student>>() {});
+                .get(new GenericType<List<Student>>() {
+                });
         return students;
     }
 
@@ -91,5 +93,47 @@ public class StudyBuddyService {
                 .request(MediaType.APPLICATION_JSON)
                 .delete();
         return response.getStatus() == 200;
+    }
+
+    /*
+     * Teacher operations
+     */
+
+    public SortedSet<LocalDateTime> getTimeslotsOf(UUID teacher) {
+        var timeslots = teacherTarget
+                .path("timeslotsOf")
+                .path(teacher.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<SortedSet<LocalDateTime>>() {
+                });
+        return timeslots;
+    }
+
+    /*
+     * Miscellanea
+     */
+
+    // The key is the UUID of the teacher and the value is the set of affinities between the student and the teacher
+    public Map<UUID, Set<Affinity>> findAffinitiesWith(UUID studentId) {
+        var affinities = serviceTarget
+                .path("affinitiesWith")
+                .path(studentId.toString())
+                .request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<Map<UUID, Set<Affinity>>>() {
+                });
+        return affinities;
+    }
+
+    public Lesson bookLesson(Lesson lesson) throws Exception {
+        var response = serviceTarget
+                .path("bookLesson")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(lesson, MediaType.APPLICATION_JSON));
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.readEntity(Lesson.class);
+        } else {
+            ExceptionDescription description = response.readEntity(ExceptionDescription.class);
+            throw Utils.buildException(description);
+        }
     }
 }
