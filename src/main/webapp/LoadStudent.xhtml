@@ -17,7 +17,7 @@
 <h:body>
    <h:messages/>
    <h:form>
-      <b>id: </b> <h:inputText value="#{studentBean.id}"/>  &nbsp;
+      <b>id: </b> <h:inputText value="#{studentBean.id == null ? (studentBean.id = 'b8d0c81d-e1c6-4708-bd02-d218a23e4805') : studentBean.id}"/>  &nbsp;
       <p:commandButton actionListener="#{studentBean.loadStudent()}" action="StudentLearning?faces-redirect=true" value="GET"/>
    </h:form>
 </h:body>

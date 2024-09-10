@@ -3,6 +3,7 @@ package ch.unil.doplab.studybuddy.ui;
 import ch.unil.doplab.studybuddy.StudyBuddyService;
 import ch.unil.doplab.studybuddy.domain.Level;
 import ch.unil.doplab.studybuddy.domain.Student;
+import ch.unil.doplab.studybuddy.domain.Rating;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -11,6 +12,7 @@ import org.primefaces.component.tree.Tree;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // TODO: consider making it a @ApplicationScoped bean
 @SessionScoped
@@ -26,8 +28,7 @@ public class UserData implements java.io.Serializable {
     private Set<String> languages;
     private List<Level> levels;
     private Set<Integer> amounts;
-
-
+    private List<Rating> ratings;
 
     public UserData() {
         this.students = new ArrayList<Student>();
@@ -38,6 +39,11 @@ public class UserData implements java.io.Serializable {
         this.levels = Arrays.asList(Level.values());
         this.amounts = new TreeSet<>(Arrays.asList(50, 100, 150, 200, 250, 300));
         System.out.println("UserData created: " + this.hashCode());
+        ratings = Stream.of(Rating.values()).collect(Collectors.toList());
+//        ratings = Arrays.stream(Rating.values())
+//                .sorted((r1, r2) -> Integer.compare(r1.getValue(), r2.getValue())) // Sorting by numeric value
+//                .map(Rating::toString) // Mapping to the name of the enum (can be .toString() for stars)
+//                .collect(Collectors.toList());
     }
 
     public Set<String> getLanguages() {
@@ -79,6 +85,15 @@ public class UserData implements java.io.Serializable {
         students = theService.getAllStudents();
         System.out.println("Students loaded: " + students);
     }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
 
     // For local testing only
 //    private void populateStudents() {

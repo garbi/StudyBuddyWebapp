@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SessionScoped
 @Named
@@ -37,7 +38,6 @@ public class StudentBean extends Student implements Serializable {
     private SortedSet<LocalDateTime> selectedTimeslots;
     private boolean showSelectedTimeslots;
     private String errorMessage;
-
 
     @Inject
     StudyBuddyService theService;
@@ -67,6 +67,13 @@ public class StudentBean extends Student implements Serializable {
         selectedAffinity = null;
         selectedTimeslots = null;
         showSelectedTimeslots = false;
+        errorMessage = null;
+    }
+
+    public void onRatingChange(Lesson lesson) {
+        if (lesson.getRatingUpdate() != null && lesson.getRatingUpdate() != lesson.getRating()) {
+            rateLesson(lesson);
+        }
     }
 
     public String getErrorMessage() {
@@ -174,16 +181,20 @@ public class StudentBean extends Student implements Serializable {
     public void updateAffinities(String topic) {
         allAffinities = theService.findAffinitiesWith(this.getUUID());
         selectedAffinityTopic = topic;
+
         Topic interest = getTopics().stream().
                 filter(t -> t.getTitle().equals(topic)).
-                findFirst().get();
-        this.selectedAffinityLevel = interest.getLevels().stream().findFirst().get();
-        selectedAffinities = allAffinities.values().stream()
-                .flatMap(Set::stream)
-                .filter(affinity -> affinity.getTitle().equals(topic))
-                .sorted()
-                .collect(Collectors.toList());
-        showSelectedAffinities = !selectedAffinities.isEmpty();
+                findFirst().orElse(null);
+
+        if (interest != null) {
+            this.selectedAffinityLevel = interest.getLevels().stream().findFirst().get();
+            selectedAffinities = allAffinities.values().stream()
+                    .flatMap(Set::stream)
+                    .filter(affinity -> affinity.getTitle().equals(topic))
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
+        showSelectedAffinities = selectedAffinities != null && !selectedAffinities.isEmpty();
         showSelectedTimeslots = false;
     }
 
@@ -209,6 +220,22 @@ public class StudentBean extends Student implements Serializable {
         return selectedTimeslots;
     }
 
+    private void rateLesson(Lesson lesson) {
+        System.out.println("-----------------> Rating lesson on " + lesson.getTitle() + " by " + lesson.getTeacherName() + "at " + lesson.getTimeslot());
+        try {
+            theService.rateLesson(lesson, lesson.getRatingUpdate());
+            lesson.updateRating();
+            theStudent.rateLesson(lesson.getTimeslot(), lesson.getRating());
+            lesson.updateRating();
+            if (selectedAffinityTopic != null) {
+                updateAffinities(selectedAffinityTopic);
+            }
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+            PrimeFaces.current().executeScript("PF('ratingErrorDialog').show();");
+        }
+    }
+
     public void bookLesson(LocalDateTime timeslot) {
         System.out.println("-----------------> Booking lesson on " + selectedAffinity.getTitle() + " with " + selectedAffinity.getTeacherName() + " at " + timeslot);
         var lesson = new Lesson(timeslot, selectedAffinity);
@@ -218,7 +245,19 @@ public class StudentBean extends Student implements Serializable {
             loadStudent();
         } catch (Exception e) {
             errorMessage = e.getMessage();
-            PrimeFaces.current().executeScript("PF('errorDialog').show();");
+            PrimeFaces.current().executeScript("PF('bookingErrorDialog').show();");
+        }
+    }
+
+    public void cancelLesson(Lesson lesson) {
+        System.out.println("-----------------> Canceling lesson on " + lesson.getTitle() + " with " + lesson.getTeacherName() + " at " + lesson.getTimeslot());
+        try {
+            theService.cancelLesson(lesson);
+            updateAffinities(lesson.getTitle());
+            loadStudent();
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+            PrimeFaces.current().executeScript("PF('cancellationErrorDialog').show();");
         }
     }
 

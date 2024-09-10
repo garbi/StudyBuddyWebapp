@@ -15,7 +15,7 @@
 
     <ui:define name="section-content">
         <p:outputLabel for="@next" value="Booked Lessons"/>
-        <p:dataTable id="lessons" var="lesson" value="#{studentBean.lessons}">
+        <p:dataTable id="lessons" value="#{studentBean.lessons}" var="lesson">
             <p:column headerText="Date">
                 <h:outputText value="#{lesson.date}">
                     <f:convertDateTime pattern="E, dd MMM yyyy"/>
@@ -35,6 +35,39 @@
             <p:column headerText="Teacher">
                 <h:outputText value="#{lesson.teacherName}"/>
             </p:column>
+
+            <p:column headerText="Action" sortable="false">
+                <h:form>
+                    <p:selectOneMenu id="dropdownRating"  value="#{lesson.ratingUpdate}" rendered="#{lesson.completed}">
+                        <f:selectItem itemLabel="Rate..." itemValue=""/>
+                        <f:selectItems value="#{userData.ratings}" var="rating" itemLabel="#{rating.label}" itemValue="#{rating.name()}"/>
+                        <p:ajax event="change" listener="#{studentBean.onRatingChange(lesson)}" render="@all" update="@all"/>
+                    </p:selectOneMenu>
+
+                    <p:dialog id="ratingErrorDialog"
+                              widgetVar="ratingErrorDialog"
+                              header="Rating impossible"
+                              modal="true"
+                              resizable="true"
+                              width="250"
+                              height="50">
+                        <h:outputText id="ratingErrorMessage" value="#{studentBean.errorMessage}" />
+                    </p:dialog>
+                </h:form>
+
+                <p:commandButton id="cancelLesson" value="Cancel" actionListener="#{studentBean.cancelLesson(lesson)}"
+                                 update=":teacherTimeSlots, :lessons" rendered="#{!lesson.completed}" />
+                <p:dialog id="cancellationErrorDialog"
+                          widgetVar="cancellationErrorDialog"
+                          header="Cancelling impossible"
+                          modal="true"
+                          resizable="true"
+                          width="250"
+                          height="50">
+                    <h:outputText id="cancellationErrorMessage" value="#{studentBean.errorMessage}" />
+                </p:dialog>
+            </p:column>
+
         </p:dataTable>
         <br/>
 
@@ -103,7 +136,7 @@
         <br/>
 
         <h:panelGroup id="teacherTimeSlots">
-            <p:outputLabel value="Available timeslots of #{studentBean.selectedAffinity.teacherName}" rendered="#{studentBean.showSelectedTimeslots}"/>
+            <p:outputLabel value="Timeslots for #{studentBean.selectedAffinity.level} #{studentBean.selectedAffinity.title} courses with #{studentBean.selectedAffinity.teacherName}" rendered="#{studentBean.showSelectedTimeslots}"/>
 
             <p:dataTable id="timeslots" var="timeslot" value="#{studentBean.selectedTimeslots}" rendered="#{studentBean.showSelectedTimeslots}">
 
@@ -120,22 +153,19 @@
                 <p:column sortable="false">
                     <p:commandButton id="bookLesson" value="Book Lesson" actionListener="#{studentBean.bookLesson(timeslot)}"
                                      update=":teacherTimeSlots, :lessons"/>
-                    <p:dialog id="errorDialog"
-                              widgetVar="errorDialog"
+                    <p:dialog id="bookingErrorDialog"
+                              widgetVar="bookingErrorDialog"
                               header="Booking impossible"
                               modal="true"
-                              resizable="false"
+                              resizable="true"
                               width="250"
                               height="50">
-                        <h:outputText id="errorMessage" value="#{studentBean.errorMessage}" />
+                        <h:outputText id="bookingErrorMessage" value="#{studentBean.errorMessage}" />
                     </p:dialog>
                 </p:column>
             </p:dataTable>
-
         </h:panelGroup>
-
     </ui:define>
-
 </ui:composition>
 
 </html>

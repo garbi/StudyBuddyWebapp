@@ -136,4 +136,33 @@ public class StudyBuddyService {
             throw Utils.buildException(description);
         }
     }
+
+    public void cancelLesson(Lesson lesson) throws Exception {
+        var response = serviceTarget
+                .path("cancelLesson")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(lesson, MediaType.APPLICATION_JSON));
+        var statusFamily = response.getStatusInfo().getFamily();
+        System.out.println("-----------------> Canceling lesson response: " + statusFamily);
+        if (statusFamily != Response.Status.Family.SUCCESSFUL) {
+            System.out.println("-----------------> Canceling lesson status: " + response.getStatus());
+            ExceptionDescription description = response.readEntity(ExceptionDescription.class);
+            throw Utils.buildException(description);
+        }
+    }
+
+    public void rateLesson(Lesson lesson, Rating rating) throws Exception {
+        var response = serviceTarget
+                .path("rateLesson")
+                .path(rating.name())
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(lesson, MediaType.APPLICATION_JSON));
+        var statusFamily = response.getStatusInfo().getFamily();
+        System.out.println("-----------------> Rating lesson response: " + statusFamily);
+        if (statusFamily != Response.Status.Family.SUCCESSFUL) {
+            System.out.println("-----------------> Rating lesson status: " + response.getStatus());
+            ExceptionDescription description = response.readEntity(ExceptionDescription.class);
+            throw Utils.buildException(description);
+        }
+    }
 }
