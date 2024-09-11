@@ -13,15 +13,16 @@
 <h1>Add student</h1>
 
 <h:body>
+    <f:event type="preRenderView" listener="#{studentBean.loadAddStudentPage()}" />
     <h:messages/>
     <h:form>
         <h:outputText value="id: " style="font-weight: bold" rendered="#{studentBean.id != null}" />
         <h:outputText value="#{studentBean.id}" rendered="#{studentBean.id != null}" /><br/>
-        <b>first name: </b> <h:inputText value="#{studentBean.firstName}"/><br/>
-        <b>last name: </b> <h:inputText value="#{studentBean.lastName}"/><br/>
-        <b>username: </b> <h:inputText value="#{studentBean.username}"/><br/>
-        <b>email: </b> <h:inputText value="#{studentBean.email}"/><br/><br/>
-        <h:commandButton actionListener="#{studentBean.addStudent()}" value="Add"/>
+        <b>first name: </b> <h:inputText value='#{studentBean.firstName}'/><br/>
+        <b>last name: </b> <h:inputText value='#{studentBean.lastName}'/><br/>
+        <b>username: </b> <h:inputText value='#{studentBean.username}'/><br/>
+        <b>email: </b> <h:inputText value='#{studentBean.email}'/><br/><br/>
+        <h:commandButton action="#{studentBean.addStudent()}" value="Add"/>
     </h:form>
 </h:body>
 

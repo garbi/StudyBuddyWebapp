@@ -283,6 +283,11 @@ public class StudentBean extends Student implements Serializable {
 
     public void addStudent() {
         var student = theService.addStudent(theStudent);
+        if (student != null) {
+            theStudent = student;
+            this.replaceWith(theStudent);
+            changed = false;
+        }
     }
 
     public void deleteStudent() {
@@ -306,5 +311,21 @@ public class StudentBean extends Student implements Serializable {
             return null;
         }
         return id.toString();
+    }
+
+    public void loadAddStudentPage() {
+        if(this.getFirstName() == null) {
+            this.setFirstName("Blaise");
+        }
+        if (this.getLastName() == null) {
+            this.setLastName("Pascal");
+        }
+        if (this.getEmail() == null) {
+            this.setEmail("blaise@random.com");
+        }
+        if (this.getUsername() == null) {
+            this.setUsername("blaise");
+        }
+        theStudent.replaceWith(this);
     }
 }

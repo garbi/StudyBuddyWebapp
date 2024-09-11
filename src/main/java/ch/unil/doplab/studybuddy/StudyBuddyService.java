@@ -99,6 +99,14 @@ public class StudyBuddyService {
      * Teacher operations
      */
 
+    public List<Teacher> getAllTeachers() {
+        var teachers = teacherTarget
+                .request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<List<Teacher>>() {
+                });
+        return teachers;
+    }
+
     public SortedSet<LocalDateTime> getTimeslotsOf(UUID teacher) {
         var timeslots = teacherTarget
                 .path("timeslotsOf")

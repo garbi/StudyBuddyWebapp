@@ -4,6 +4,7 @@ import ch.unil.doplab.studybuddy.StudyBuddyService;
 import ch.unil.doplab.studybuddy.domain.Level;
 import ch.unil.doplab.studybuddy.domain.Student;
 import ch.unil.doplab.studybuddy.domain.Rating;
+import ch.unil.doplab.studybuddy.domain.Teacher;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -25,6 +26,7 @@ public class UserData implements java.io.Serializable {
     StudyBuddyService theService;
 
     private List<Student> students;
+    private List<Teacher> teachers;
     private Set<String> languages;
     private List<Level> levels;
     private Set<Integer> amounts;
@@ -65,6 +67,7 @@ public class UserData implements java.io.Serializable {
     public void reset() {
         theService.resetService();
         loadStudents();
+        loadTeachers();
     }
 
     public List<String> getTopics() {
@@ -80,10 +83,17 @@ public class UserData implements java.io.Serializable {
     }
 
     public void loadStudents() {
-//        students.clear();  // For local testing only
-//        populateStudents(); // For local testing only
         students = theService.getAllStudents();
         System.out.println("Students loaded: " + students);
+    }
+
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
+
+    public void loadTeachers() {
+        teachers = theService.getAllTeachers();
+        System.out.println("Teachers loaded: " + students);
     }
 
     public void setRatings(List<Rating> ratings) {
@@ -93,12 +103,4 @@ public class UserData implements java.io.Serializable {
     public List<Rating> getRatings() {
         return ratings;
     }
-
-
-    // For local testing only
-//    private void populateStudents() {
-//        students.add(new Student(UUID.fromString("b8d0c81d-e1c6-4708-bd02-d218a23e4805"), "paul", "Smith", "paul.smith@gmail.com", "paul"));
-//        students.add(new Student(UUID.fromString("0ab2ec68-c574-4d81-bed0-a93c31fab1c0"), "Jane", "Doe", "jane.doe@icloud.com", "jane"));
-//        students.add(new Student(UUID.fromString("5d53a98b-53a8-4580-adc1-28067b37582a"), "Jean", "Dupont", "jean.dupont@facebook.com", "jean"));
-//    }
 }
