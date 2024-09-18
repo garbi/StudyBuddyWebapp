@@ -8,9 +8,6 @@ import ch.unil.doplab.studybuddy.domain.Teacher;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.primefaces.component.tree.Tree;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
