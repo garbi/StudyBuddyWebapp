@@ -107,6 +107,45 @@ public class StudyBuddyService {
         return teachers;
     }
 
+    public Teacher getTeacher(String id) {
+        var teacher = teacherTarget
+                .path(id.toString())
+                .request()
+                .get(Teacher.class);
+        return teacher;
+    }
+
+
+    public boolean setTeacher(Teacher teacher) {
+        var response = teacherTarget
+                .path(teacher.getUUID().toString())
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(teacher, MediaType.APPLICATION_JSON));
+        return response.getStatus() == 200;
+    }
+
+
+    public Teacher addTeacher(Teacher teacher) {
+        teacher.setUUID(null);  // To make sure the id is not set and avoid bug related to ill-formed UUID on server side
+        var response = teacherTarget
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(teacher, MediaType.APPLICATION_JSON));
+        Teacher newlyCreatedTeacher = null;
+        if (response.getStatus() == 200 && response.hasEntity()) {
+            newlyCreatedTeacher = response.readEntity(Teacher.class);
+            teacher.setUUID(newlyCreatedTeacher.getUUID());
+        }
+        return newlyCreatedTeacher;
+    }
+
+    public boolean deleteTeacher(String id) {
+        var response = teacherTarget
+                .path(id)
+                .request(MediaType.APPLICATION_JSON)
+                .delete();
+        return response.getStatus() == 200;
+    }
+
     public SortedSet<LocalDateTime> getTimeslotsOf(UUID teacher) {
         var timeslots = teacherTarget
                 .path("timeslotsOf")

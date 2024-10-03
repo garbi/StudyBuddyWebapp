@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+   <title>Add student</title>
+</h:head>
+
+<h1>Add teacher</h1>
+
+<h:body>
+   <f:event type="preRenderView" listener="#{teacherBean.loadAddTeacherPage()}" />
+   <h:messages/>
+   <h:form>
+      <h:outputText value="id: " style="font-weight: bold" rendered="#{teacherBean.id != null}" />
+      <h:outputText value="#{teacherBean.id}" rendered="#{teacherBean.id != null}" /><br/>
+      <b>first name: </b> <h:inputText value='#{teacherBean.firstName}'/><br/>
+      <b>last name: </b> <h:inputText value='#{teacherBean.lastName}'/><br/>
+      <b>username: </b> <h:inputText value='#{teacherBean.username}'/><br/>
+      <b>email: </b> <h:inputText value='#{teacherBean.email}'/><br/><br/>
+      <h:commandButton action="#{teacherBean.addTeacher()}" value="Add"/>
+   </h:form>
+</h:body>
+
+</html>

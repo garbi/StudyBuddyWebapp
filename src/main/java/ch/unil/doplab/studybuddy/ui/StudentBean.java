@@ -50,7 +50,6 @@ public class StudentBean extends Student implements Serializable {
         super(id, firstName, lastName, email, username);
         init();
         theStudent = new Student(id, firstName, lastName, email, username);
-        selectedAmount = 0;
     }
 
     public void init() {
@@ -59,6 +58,7 @@ public class StudentBean extends Student implements Serializable {
         selectedLanguage = null;
         selectedTopic = null;
         selectedLevel = null;
+        selectedAmount = 0;
         allAffinities = null;
         selectedAffinities = null;
         showSelectedAffinities = false;

@@ -7,18 +7,155 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
-   <ui:composition template = "templates/TeacherTemplate.xhtml">
+<ui:composition template="templates/TeacherTemplate.xhtml">
 
-      <ui:define name = "title">Teacher Profile</ui:define>
+    <ui:define name="title">Teacher | Profile</ui:define>
 
-      <ui:define name="section-title">Teacher Profile</ui:define>
+    <ui:define name="section-title">Teacher | #{teacherBean.fullName} | Profile</ui:define>
 
-      <ui:define name = "section-content">
-         <p>
-            This is the teacher profile...
-         </p>
-      </ui:define>
+    <ui:define name="section-content">
+        <p>
+            <p:outputLabel for="@next" value="Basic Information"/>
+        </p>
 
-   </ui:composition>
+        <h:form id="basicInfo">
+            <span class="ui-float-label">
+                <p:inputText id="firstname" value="#{teacherBean.firstName}" required="true"
+                             requiredMessage="First name is required.">
+                    <p:ajax event="keyup" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                    <p:ajax event="blur" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                </p:inputText>
+                <p:outputLabel for="@previous" value="First Name"/>
+                <p:message for="firstname" display="text"/>
+            </span>
+            <br/>
+            <span class="ui-float-label">
+                <p:inputText id="lastname" value="#{teacherBean.lastName}" required="true"
+                             requiredMessage="Last name is required.">
+                    <p:ajax event="keyup" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                    <p:ajax event="blur" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                </p:inputText>
+                <p:outputLabel for="@previous" value="Last Name"/>
+                <p:message for="lastname" display="text"/>
+            </span>
+            <br/>
+            <span class="ui-float-label">
+                <p:inputText id="username" value="#{teacherBean.username}" required="true"
+                             requiredMessage="Username is required.">
+                    <p:ajax event="keyup" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                    <p:ajax event="blur" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                </p:inputText>
+                <p:outputLabel for="@previous" value="Username"/>
+                <p:message for="username" display="text"/>
+            </span>
+            <br/>
+            <span class="ui-float-label">
+                <p:inputText id="email" value="#{teacherBean.email}" required="true"
+                             requiredMessage="Email is required." validatorMessage="Incorrect email format.">
+                    <p:ajax event="keyup" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                    <p:ajax event="blur" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                    <f:validateRegex pattern="^[^@]+@[^@]+\.[^@]+$"/>
+                </p:inputText>
+                <p:outputLabel for="@previous" value="Email"/>
+                <p:message for="email" display="text"/>
+            </span>
+            <br/>
+            <span class="ui-float-label">
+                <p:inputTextarea id="biography" value="#{teacherBean.biography}" required="true"
+                                 requiredMessage="Biography is required."
+                                 rows="5" cols="50" maxlength="200" counter="charCounter"
+                                 counterTemplate="{0} characters remaining.">
+                    <p:ajax event="blur" update="basicInfo" listener="#{teacherBean.checkIfChanged()}"/>
+                </p:inputTextarea>
+                <p:outputLabel for="@previous" value="Biography"/>
+                <p:message for="biography" display="text"/>
+                <br/>
+                <h:outputText id="charCounter" style="font-size: 12px;"/>
+            </span>
 
+
+            <p:spacer height="30"/>
+            <p:commandButton id="updateButton" value="Update" disabled="#{teacherBean.buttonDisabled}"
+                             action="#{teacherBean.updateTeacher()}"
+                             update="basicInfo"/>
+            <p:spacer width="10"/>
+            <p:commandButton id="undoButton" value="Undo" actionListener="#{teacherBean.undoChanges()}" immediate="true"
+                             update="basicInfo" oncomplete="window.location.reload();"/>
+        </h:form>
+        <br/>
+
+        <p>
+            <p:outputLabel value="Rating"/>
+            <br/>
+            <h:outputLabel value="#{teacherBean.formattedRating}" style="font-size: 20px;"/>
+        </p>
+
+        <h:form id="balance">
+            <p:outputLabel for="@next" value="Balance"/>
+            <br/>
+            <h:outputLabel value="CHF #{teacherBean.balance}" style="font-size: 20px;"/>
+            <br/>
+            <p:commandButton value="Add" actionListener="#{teacherBean.addSelectedAmount}"
+                             update="balance"/>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownAmount" value="#{teacherBean.selectedAmount}">
+                <f:selectItem itemLabel="Select amount..." itemValue=""/>
+                <f:selectItems value="#{userData.amounts}"/>
+            </p:selectOneMenu>
+        </h:form>
+        <br/>
+
+        <h:form id="hourlyFee">
+            <p:outputLabel for="@next" value="Hourly Fee"/>
+            <br/>
+            <h:outputLabel value="CHF #{teacherBean.hourlyFee}" style="font-size: 20px;"/>
+            <br/>
+            <p:commandButton value="Set" actionListener="#{teacherBean.saveHourlyFee}"
+                             update="hourlyFee"/>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownFee" value="#{teacherBean.selectedHourlyFee}">
+                <f:selectItem itemLabel="Select hourly fee..." itemValue=""/>
+                <f:selectItems value="#{userData.hourlyFees}"/>
+            </p:selectOneMenu>
+        </h:form>
+        <br/>
+
+        <p:outputLabel for="@next" value="Spoken Languages"/>
+        <h:form id="languageForm">
+            <p:dataTable id="languages" value="#{teacherBean.languages}" var="lang" sortBy="#{lang}"
+                         sortOrder="ascending">
+                <p:column headerText="Language" sortable="false">
+                    <h:outputText value="#{lang}"/>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton value="Delete" actionListener="#{teacherBean.deleteLanguage(lang)}"
+                                     update="languages"/>
+                </p:column>
+            </p:dataTable>
+            <p:spacer height="30"/>
+            <p:commandButton value="Add" actionListener="#{teacherBean.addSelectedLanguage}"
+                             update="languages"/>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownLanguage" value="#{teacherBean.selectedLanguage}">
+                <f:selectItem itemLabel="Select language..." itemValue=""/>
+                <f:selectItems value="#{userData.languages}"/>
+            </p:selectOneMenu>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
+
+<script type="text/javascript">
+    var cursorPosition = 0;
+
+    function saveCursorPosition() {
+        var textarea = document.getElementById('myTextarea');
+        cursorPosition = textarea.selectionStart;
+    }
+
+    function restoreCursorPosition() {
+        var textarea = document.getElementById('myTextarea');
+        textarea.setSelectionRange(cursorPosition, cursorPosition);
+    }
+</script>
 </html>

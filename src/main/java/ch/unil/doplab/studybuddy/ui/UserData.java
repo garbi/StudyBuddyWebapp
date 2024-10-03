@@ -5,6 +5,7 @@ import ch.unil.doplab.studybuddy.domain.Level;
 import ch.unil.doplab.studybuddy.domain.Student;
 import ch.unil.doplab.studybuddy.domain.Rating;
 import ch.unil.doplab.studybuddy.domain.Teacher;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -12,8 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-// TODO: consider making it a @ApplicationScoped bean
-@SessionScoped
+@ApplicationScoped
 @Named
 public class UserData implements java.io.Serializable {
 
@@ -27,6 +27,7 @@ public class UserData implements java.io.Serializable {
     private Set<String> languages;
     private List<Level> levels;
     private Set<Integer> amounts;
+    private Set<Integer> hourlyFees;
     private List<Rating> ratings;
 
     public UserData() {
@@ -37,6 +38,7 @@ public class UserData implements java.io.Serializable {
                 .collect(Collectors.toCollection(TreeSet::new));
         this.levels = Arrays.asList(Level.values());
         this.amounts = new TreeSet<>(Arrays.asList(50, 100, 150, 200, 250, 300));
+        this.hourlyFees = new TreeSet<>(Arrays.asList(25, 50, 75, 100));
         System.out.println("UserData created: " + this.hashCode());
         ratings = Stream.of(Rating.values()).collect(Collectors.toList());
 //        ratings = Arrays.stream(Rating.values())
@@ -59,6 +61,14 @@ public class UserData implements java.io.Serializable {
 
     public void setAmounts(Set<Integer> amounts) {
         this.amounts = amounts;
+    }
+
+    public Set<Integer> getHourlyFees() {
+        return hourlyFees;
+    }
+
+    public void setHourlyFees(Set<Integer> hourlyFees) {
+        this.hourlyFees = hourlyFees;
     }
 
     public void reset() {
