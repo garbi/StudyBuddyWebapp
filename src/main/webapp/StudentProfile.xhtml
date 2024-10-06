@@ -11,13 +11,14 @@
 
     <ui:define name="title">Student | Profile</ui:define>
 
-    <ui:define name="section-title">Student | #{studentBean.fullName} | Profile</ui:define>
+    <ui:define name="section-title">#{studentBean.fullName} | Profile</ui:define>
 
     <ui:define name="section-content">
+        <f:event type="preRenderView" listener="#{studentBean.loadStudent()}"/>
+
         <p>
             <p:outputLabel for="@next" value="Basic Information"/>
         </p>
-
         <h:form id="basicInfo">
             <span class="ui-float-label">
                 <p:inputText id="firstname" value="#{studentBean.firstName}" required="true"

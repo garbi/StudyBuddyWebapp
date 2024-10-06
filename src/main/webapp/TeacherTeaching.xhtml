@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="templates/TeacherTemplate.xhtml">
+
+    <ui:define name="title">Teacher | Teaching</ui:define>
+
+    <ui:define name="section-title">#{teacherBean.fullName} | Teaching</ui:define>
+
+    <ui:define name="section-content">
+        <f:event type="preRenderView" listener="#{teacherBean.loadTeacher}"/>
+
+        <p:outputLabel for="@next" value="Booked Lessons"/>
+        <p:dataTable id="lessons" value="#{teacherBean.lessons}" var="lesson">
+            <p:column headerText="Date">
+                <h:outputText value="#{lesson.date}">
+                    <f:convertDateTime pattern="E, dd MMM yyyy"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Time">
+                <h:outputText value="#{lesson.date}">
+                    <f:convertDateTime pattern="HH:mm z" timeZone="CET"/>
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Topic">
+                <h:outputText value="#{lesson.title}"/>
+            </p:column>
+            <p:column headerText="Level">
+                <h:outputText value="#{lesson.level}"/>
+            </p:column>
+            <p:column headerText="Student">
+                <h:outputLink
+                        value="mailto:#{lesson.studentEmail}?subject=#{lesson.level} #{lesson.topic} Lesson on #{lesson.date.toLocaleString()} CET">
+                    #{lesson.studentName}
+                </h:outputLink>
+            </p:column>
+
+            <p:column headerText="Action" sortable="false">
+                <h:form>
+                    <h:outputText value="#{lesson.rating.label}" rendered="#{lesson.completed}"/>
+                    <p:commandButton id="cancelLesson" value="Cancel"
+                                     actionListener="#{teacherBean.cancelLesson(lesson)}"
+                                     update=":lessons" rendered="#{!lesson.completed}"/>
+                    <p:dialog id="cancellationErrorDialog"
+                              widgetVar="cancellationErrorDialog"
+                              header="Cancelling impossible"
+                              modal="true"
+                              resizable="true"
+                              width="250"
+                              height="50">
+                        <h:outputText id="cancellationErrorMessage" value="#{teacherBean.errorMessage}"/>
+                    </p:dialog>
+                </h:form>
+            </p:column>
+        </p:dataTable>
+        <br/>
+
+        <p:outputLabel for="@next" value="Proposed Courses"/>
+        <h:form id="courseForm">
+            <p:dataTable id="courses" var="course" value="#{teacherBean.courseList}">
+                <p:column headerText="Topic">
+                    <h:outputText value="#{course.title}"/>
+                </p:column>
+                <p:column headerText="Description">
+                    <h:outputText value="#{course.description}"/>
+                </p:column>
+                <p:column headerText="Levels">
+                    <h:outputText value="#{course.listLevels()}"/>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton value="Delete"
+                                     actionListener="#{teacherBean.deleteCourse(course.title)}"
+                                     update="courses, :courseForm:addCourseButton"/>
+                </p:column>
+            </p:dataTable>
+            <p:spacer height="20"/>
+
+            <p:commandButton id="addCourseButton" value="#{teacherBean.addCourseButtonName}"
+                             actionListener="#{teacherBean.addSelectedCourse}"
+                             disabled="#{teacherBean.addCourseButtonDisabled}"
+                             update="courses, addCourseButton"/>
+            <p:spacer width="10"/>
+            <p:selectOneMenu id="dropdownTopic" value="#{teacherBean.selectedTopic}">
+                <f:selectItem itemLabel="Select topic..." itemValue=""/>
+                <f:selectItems value="#{userData.topics}"/>
+                <p:ajax event="change" update="addCourseButton, descriptionPanel, levelPanel"
+                        listener="#{teacherBean.checkIfAddCoursePossible()}"/>
+            </p:selectOneMenu>
+            <p:spacer width="10"/>
+
+            <p:panel id="descriptionPanel">
+                <p:outputLabel value="Course Description:" style="font-weight: bold;"/>
+                <br/>
+                <p:inputTextarea id="description" value="#{teacherBean.selectedDescription}" required="true"
+                                 requiredMessage="Course description is required."
+                                 rows="5" cols="50" maxlength="200" counter="charCounter"
+                                 counterTemplate="{0} characters remaining."
+                                 style="margin-top: 5px;">
+                    <p:ajax event="blur" update="addCourseButton, descriptionPanel"
+                            listener="#{teacherBean.checkIfAddCoursePossible()}"/>
+                </p:inputTextarea>
+                <p:message for="description" display="text"/>
+                <br/>
+                <h:outputText id="charCounter" style="font-size: 12px;"/>
+            </p:panel>
+
+
+            <p:panel>
+                <h:panelGroup id="levelPanel" style="display: flex; align-items: center;">
+                    <p:outputLabel value="Course Levels: " style="font-weight: bold; margin-right: 10px;"/>
+                    <p:selectManyCheckbox id="levelCheckbox" value="#{teacherBean.selectedLevels}" layout="grid"
+                                          columns="3">
+                        <f:selectItems value="#{userData.levels}" var="level" itemLabel="#{level.name()}"
+                                       itemValue="#{level}"/>
+                        <p:ajax event="change" update="addCourseButton, levelPanel"
+                                listener="#{teacherBean.checkIfAddCoursePossible()}"/>
+                    </p:selectManyCheckbox>
+                </h:panelGroup>
+            </p:panel>
+        </h:form>
+        <br/>
+
+        <p:outputLabel value="Available Timeslots"/>
+        <h:form id="timeslotForm">
+            <p:dataTable id="timeslots" var="timeslot" value="#{teacherBean.timeslots}">
+                <p:column headerText="Date">
+                    <h:outputText value="#{userData.convertToDate(timeslot)}">
+                        <f:convertDateTime pattern="E, dd MMM yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Time">
+                    <h:outputText value="#{userData.convertToDate(timeslot)}">
+                        <f:convertDateTime pattern="HH:mm z" timeZone="CET"/>
+                    </h:outputText>
+                </p:column>
+                <p:column sortable="false">
+                    <p:commandButton id="deleteTimeslot" value="Delete"
+                                     actionListener="#{teacherBean.deleteTimeslot(timeslot)}"
+                                     update="timeslotForm"/>
+                </p:column>
+            </p:dataTable>
+            <p:spacer height="20"/>
+
+            <p:commandButton id="addTimeslotButton" value="Add"
+                             actionListener="#{teacherBean.addSelectedTimeslot()}"
+                             update="timeslotForm"/>
+            <p:spacer width="10"/>
+
+            <p:calendar id="dateTime" value="#{teacherBean.selectedTimeslot}"
+                        mindate="#{teacherBean.earliestPossibleTimeslot}" pattern="dd/MM/yyyy HH:mm"
+                        showTime="true" timeFormat="HH:mm" stepMinute="60" showMinute="false"/>
+        </h:form>
+    </ui:define>
+</ui:composition>
+
+</html>

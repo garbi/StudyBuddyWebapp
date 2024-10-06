@@ -3,8 +3,6 @@ package ch.unil.doplab.studybuddy.ui;
 import ch.unil.doplab.studybuddy.StudyBuddyService;
 import ch.unil.doplab.studybuddy.domain.*;
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.primefaces.PrimeFaces;
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SessionScoped
 @Named
@@ -182,7 +179,7 @@ public class StudentBean extends Student implements Serializable {
         allAffinities = theService.findAffinitiesWith(this.getUUID());
         selectedAffinityTopic = topic;
 
-        Topic interest = getTopics().stream().
+        Topic interest = getInterests().stream().
                 filter(t -> t.getTitle().equals(topic)).
                 findFirst().orElse(null);
 
@@ -250,7 +247,7 @@ public class StudentBean extends Student implements Serializable {
     }
 
     public void cancelLesson(Lesson lesson) {
-        System.out.println("-----------------> Canceling lesson on " + lesson.getTitle() + " with " + lesson.getTeacherName() + " at " + lesson.getTimeslot());
+        System.out.println("-----------------> "+ lesson.getStudentName() +" is canceling lesson on " + lesson.getTitle() + " with " + lesson.getTeacherName() + " at " + lesson.getTimeslot());
         try {
             theService.cancelLesson(lesson);
             updateAffinities(lesson.getTitle());
@@ -259,10 +256,6 @@ public class StudentBean extends Student implements Serializable {
             errorMessage = e.getMessage();
             PrimeFaces.current().executeScript("PF('cancellationErrorDialog').show();");
         }
-    }
-
-    public Date convertToDate(LocalDateTime timeslot) {
-        return Date.from(timeslot.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public void loadStudent() {

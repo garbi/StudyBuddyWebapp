@@ -5,10 +5,14 @@ import ch.unil.doplab.studybuddy.domain.Level;
 import ch.unil.doplab.studybuddy.domain.Student;
 import ch.unil.doplab.studybuddy.domain.Rating;
 import ch.unil.doplab.studybuddy.domain.Teacher;
+import jakarta.ejb.Local;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,10 +45,6 @@ public class UserData implements java.io.Serializable {
         this.hourlyFees = new TreeSet<>(Arrays.asList(25, 50, 75, 100));
         System.out.println("UserData created: " + this.hashCode());
         ratings = Stream.of(Rating.values()).collect(Collectors.toList());
-//        ratings = Arrays.stream(Rating.values())
-//                .sorted((r1, r2) -> Integer.compare(r1.getValue(), r2.getValue())) // Sorting by numeric value
-//                .map(Rating::toString) // Mapping to the name of the enum (can be .toString() for stars)
-//                .collect(Collectors.toList());
     }
 
     public Set<String> getLanguages() {
@@ -109,5 +109,9 @@ public class UserData implements java.io.Serializable {
 
     public List<Rating> getRatings() {
         return ratings;
+    }
+
+    public Date convertToDate(LocalDateTime timeslot) {
+        return Date.from(timeslot.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

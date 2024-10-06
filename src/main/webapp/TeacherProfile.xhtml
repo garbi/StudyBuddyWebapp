@@ -11,13 +11,14 @@
 
     <ui:define name="title">Teacher | Profile</ui:define>
 
-    <ui:define name="section-title">Teacher | #{teacherBean.fullName} | Profile</ui:define>
+    <ui:define name="section-title">#{teacherBean.fullName} | Profile</ui:define>
 
     <ui:define name="section-content">
+        <f:event type="preRenderView" listener="#{teacherBean.loadTeacher}"/>
+
         <p>
             <p:outputLabel for="@next" value="Basic Information"/>
         </p>
-
         <h:form id="basicInfo">
             <span class="ui-float-label">
                 <p:inputText id="firstname" value="#{teacherBean.firstName}" required="true"
@@ -72,8 +73,6 @@
                 <br/>
                 <h:outputText id="charCounter" style="font-size: 12px;"/>
             </span>
-
-
             <p:spacer height="30"/>
             <p:commandButton id="updateButton" value="Update" disabled="#{teacherBean.buttonDisabled}"
                              action="#{teacherBean.updateTeacher()}"
@@ -82,7 +81,6 @@
             <p:commandButton id="undoButton" value="Undo" actionListener="#{teacherBean.undoChanges()}" immediate="true"
                              update="basicInfo" oncomplete="window.location.reload();"/>
         </h:form>
-        <br/>
 
         <p>
             <p:outputLabel value="Rating"/>
@@ -145,17 +143,4 @@
 
 </ui:composition>
 
-<script type="text/javascript">
-    var cursorPosition = 0;
-
-    function saveCursorPosition() {
-        var textarea = document.getElementById('myTextarea');
-        cursorPosition = textarea.selectionStart;
-    }
-
-    function restoreCursorPosition() {
-        var textarea = document.getElementById('myTextarea');
-        textarea.setSelectionRange(cursorPosition, cursorPosition);
-    }
-</script>
 </html>
