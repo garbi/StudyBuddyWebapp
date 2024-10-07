@@ -14,8 +14,6 @@
     <ui:define name="section-title">#{studentBean.fullName} | Profile</ui:define>
 
     <ui:define name="section-content">
-        <f:event type="preRenderView" listener="#{studentBean.loadStudent()}"/>
-
         <p>
             <p:outputLabel for="@next" value="Basic Information"/>
         </p>
@@ -88,7 +86,8 @@
 
         <p:outputLabel for="@next" value="Spoken Languages"/>
         <h:form id="languageForm">
-            <p:dataTable id="languages"  value="#{studentBean.languages}" var="lang" sortBy="#{lang}" sortOrder="ascending">
+            <p:dataTable id="languages" value="#{studentBean.languages}" var="lang" sortBy="#{lang}"
+                         sortOrder="ascending">
                 <p:column headerText="Language" sortable="false">
                     <h:outputText value="#{lang}"/>
                 </p:column>

@@ -14,8 +14,6 @@
     <ui:define name="section-title">#{teacherBean.fullName} | Profile</ui:define>
 
     <ui:define name="section-content">
-        <f:event type="preRenderView" listener="#{teacherBean.loadTeacher}"/>
-
         <p>
             <p:outputLabel for="@next" value="Basic Information"/>
         </p>
