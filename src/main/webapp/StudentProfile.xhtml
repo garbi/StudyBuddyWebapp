@@ -14,50 +14,41 @@
     <ui:define name="section-title">#{studentBean.fullName} | Profile</ui:define>
 
     <ui:define name="section-content">
-        <p>
-            <p:outputLabel for="@next" value="Basic Information"/>
-        </p>
+        <p:outputLabel for="@next" value="Basic Information"/>
         <h:form id="basicInfo">
-            <span class="ui-float-label">
-                <p:inputText id="firstname" value="#{studentBean.firstName}" required="true"
-                             requiredMessage="First name is required.">
-                    <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                    <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                </p:inputText>
-                <p:outputLabel for="@previous" value="First Name"/>
-                <p:message for="firstname" display="text"/>
-            </span>
+            <p:outputLabel for="@next" value="First Name" style="font-size: 12px;"/><br/>
+            <p:inputText id="firstname" value="#{studentBean.firstName}" required="true"
+                         requiredMessage="First name is required.">
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+            </p:inputText>
+            <p:message for="firstname" display="text"/>
             <br/>
-            <span class="ui-float-label">
-                <p:inputText id="lastname" value="#{studentBean.lastName}" required="true"
-                             requiredMessage="Last name is required.">
-                    <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                    <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                </p:inputText>
-                <p:outputLabel for="@previous" value="Last Name"/>
-                <p:message for="lastname" display="text"/>
-            </span>
+            <p:outputLabel for="@next" value="Last Name" style="font-size: 12px;"/><br/>
+            <p:inputText id="lastname" value="#{studentBean.lastName}" required="true"
+                         requiredMessage="Last name is required.">
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+            </p:inputText>
+            <p:message for="lastname" display="text"/>
             <br/>
-            <span class="ui-float-label">
-                <p:inputText id="username" value="#{studentBean.username}" required="true"
-                             requiredMessage="Username is required.">
-                    <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                    <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                </p:inputText>
-                <p:outputLabel for="@previous" value="Username"/>
-                <p:message for="username" display="text"/>
-            </span>
+            <p:outputLabel for="@next" value="Username" style="font-size: 12px;"/><br/>
+            <p:inputText id="username" value="#{studentBean.username}" required="true"
+                         requiredMessage="Username is required.">
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+            </p:inputText>
+            <p:message for="username" display="text"/>
             <br/>
-            <span class="ui-float-label">
-                <p:inputText id="email" value="#{studentBean.email}" required="true"
-                             requiredMessage="Email is required." validatorMessage="Incorrect email basicInfoat.">
-                    <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                    <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                    <f:validateRegex pattern="^[^@]+@[^@]+\.[^@]+$"/>
-                </p:inputText>
-                <p:outputLabel for="@previous" value="Email"/>
-                <p:message for="email" display="text"/>
-            </span>
+            <p:outputLabel for="@next" value="Email" style="font-size: 12px;"/><br/>
+            <p:inputText id="email" value="#{studentBean.email}" required="true"
+                         requiredMessage="Email is required." validatorMessage="Incorrect email.">
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <f:validateRegex pattern="^[^@]+@[^@]+\.[^@]+$"/>
+            </p:inputText>
+            <p:message for="email" display="text"/>
+            <br/>
             <p:spacer height="30"/>
             <p:commandButton id="updateButton" value="Update" disabled="#{studentBean.buttonDisabled}"
                              action="#{studentBean.updateStudent()}"
@@ -67,7 +58,6 @@
                              update="basicInfo" oncomplete="window.location.reload();"/>
         </h:form>
         <br/>
-
         <h:form id="balance">
             <p:outputLabel for="@next" value="Balance"/>
             <br/>
