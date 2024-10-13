@@ -58,7 +58,7 @@
                               resizable="true"
                               width="250"
                               height="50">
-                        <h:outputText id="ratingErrorMessage" value="#{studentBean.errorMessage}"/>
+                        <h:outputText id="ratingErrorMessage" value="#{studentBean.dialogMessage}"/>
                     </p:dialog>
 
                     <p:commandButton id="cancelLesson" value="Cancel"
@@ -71,7 +71,7 @@
                               resizable="true"
                               width="250"
                               height="50">
-                        <h:outputText id="cancellationErrorMessage" value="#{studentBean.errorMessage}"/>
+                        <h:outputText id="cancellationErrorMessage" value="#{studentBean.dialogMessage}"/>
                     </p:dialog>
                 </h:form>
             </p:column>
@@ -173,7 +173,7 @@
                               resizable="true"
                               width="250"
                               height="50">
-                        <h:outputText id="bookingErrorMessage" value="#{studentBean.errorMessage}"/>
+                        <h:outputText id="bookingErrorMessage" value="#{studentBean.dialogMessage}"/>
                     </p:dialog>
                 </p:column>
             </p:dataTable>

@@ -39,13 +39,13 @@ public class TeacherBean extends Teacher implements Serializable {
 
 
     public TeacherBean() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
-    public TeacherBean(UUID id, String firstName, String lastName, String email, String username) {
-        super(id, firstName, lastName, email, username);
+    public TeacherBean(UUID id, String firstName, String lastName, String email, String username, String password) {
+        super(id, firstName, lastName, email, username, password);
         init();
-        theTeacher = new Teacher(id, firstName, lastName, email, username);
+        theTeacher = new Teacher(id, firstName, lastName, email, username, password);
     }
 
     public void init() {
@@ -240,7 +240,7 @@ public class TeacherBean extends Teacher implements Serializable {
     }
 
     public void checkIfAddCoursePossible() {
-        addCoursePossible = selectedTopic != null && selectedDescription != null && !selectedDescription.isEmpty() && selectedLevels != null && !selectedLevels.isEmpty();
+        addCoursePossible = selectedTopic != null && selectedDescription != null && !selectedDescription.isBlank() && selectedLevels != null && !selectedLevels.isEmpty();
     }
 
     public boolean isAddCourseButtonDisabled() {

@@ -9,7 +9,6 @@ import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,8 @@ public class StudentBean extends Student implements Serializable {
     // Field theStudent always contains the current student as know on the server
     // so that we can compare it with the current student in the form
     private Student theStudent;
+    private String currentPassword;
+    private String newPassword;
     private boolean changed;
     private String selectedLanguage;
     private String selectedTopic;
@@ -34,23 +35,25 @@ public class StudentBean extends Student implements Serializable {
     private Affinity selectedAffinity;
     private SortedSet<LocalDateTime> selectedTimeslots;
     private boolean showSelectedTimeslots;
-    private String errorMessage;
+    private String dialogMessage;
 
     @Inject
     StudyBuddyService theService;
 
     public StudentBean() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
-    public StudentBean(UUID id, String firstName, String lastName, String email, String username) {
-        super(id, firstName, lastName, email, username);
+    public StudentBean(UUID id, String firstName, String lastName, String email, String username, String password) {
+        super(id, firstName, lastName, email, username, password);
         init();
-        theStudent = new Student(id, firstName, lastName, email, username);
+        theStudent = new Student(id, firstName, lastName, email, username, password);
     }
 
     public void init() {
         theStudent = null;
+        currentPassword = null;
+        newPassword = null;
         changed = false;
         selectedLanguage = null;
         selectedTopic = null;
@@ -64,7 +67,41 @@ public class StudentBean extends Student implements Serializable {
         selectedAffinity = null;
         selectedTimeslots = null;
         showSelectedTimeslots = false;
-        errorMessage = null;
+        dialogMessage = null;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public void savePasswordChange() {
+        if (Utils.checkPassword(currentPassword, theStudent.getPassword())) {
+            this.setPassword(Utils.hashPassword(newPassword));
+            updateStudent();
+            dialogMessage = "Your password was successfully changed.";
+            PrimeFaces.current().executeScript("PF('passwordChangeDialog').show();");
+            resetPasswordChange();
+        } else {
+            dialogMessage = "Your password could not be changed because the current password is incorrect.";
+            PrimeFaces.current().executeScript("PF('passwordChangeDialog').show();");
+        }
+    }
+
+    public void resetPasswordChange() {
+        currentPassword = null;
+        newPassword = null;
     }
 
     public void onRatingChange(Lesson lesson) {
@@ -73,8 +110,8 @@ public class StudentBean extends Student implements Serializable {
         }
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getDialogMessage() {
+        return dialogMessage;
     }
 
     public int getSelectedAmount() {
@@ -130,7 +167,8 @@ public class StudentBean extends Student implements Serializable {
         boolean lastNameChanged = !theStudent.getLastName().equals(this.getLastName());
         boolean emailChanged = !theStudent.getEmail().equals(this.getEmail());
         boolean usernameChanged = !theStudent.getUsername().equals(this.getUsername());
-        changed = firstNameChanged || lastNameChanged || emailChanged || usernameChanged;
+        boolean passwordChanged = !theStudent.getPassword().equals(this.getPassword());
+        changed = firstNameChanged || lastNameChanged || emailChanged || usernameChanged || passwordChanged;
     }
 
     public void undoChanges() {
@@ -228,7 +266,7 @@ public class StudentBean extends Student implements Serializable {
                 updateAffinities(selectedAffinityTopic);
             }
         } catch (Exception e) {
-            errorMessage = e.getMessage();
+            dialogMessage = e.getMessage();
             PrimeFaces.current().executeScript("PF('ratingErrorDialog').show();");
         }
     }
@@ -241,7 +279,7 @@ public class StudentBean extends Student implements Serializable {
             updateAffinities(selectedAffinity.getTitle());
             loadStudent();
         } catch (Exception e) {
-            errorMessage = e.getMessage();
+            dialogMessage = e.getMessage();
             PrimeFaces.current().executeScript("PF('bookingErrorDialog').show();");
         }
     }
@@ -253,7 +291,7 @@ public class StudentBean extends Student implements Serializable {
             updateAffinities(lesson.getTitle());
             loadStudent();
         } catch (Exception e) {
-            errorMessage = e.getMessage();
+            dialogMessage = e.getMessage();
             PrimeFaces.current().executeScript("PF('cancellationErrorDialog').show();");
         }
     }

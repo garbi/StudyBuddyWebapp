@@ -19,35 +19,35 @@
             <p:outputLabel for="@next" value="First Name" style="font-size: 12px;"/><br/>
             <p:inputText id="firstname" value="#{studentBean.firstName}" required="true"
                          requiredMessage="First name is required.">
-                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
                 <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
             </p:inputText>
             <p:message for="firstname" display="text"/>
             <br/>
             <p:outputLabel for="@next" value="Last Name" style="font-size: 12px;"/><br/>
             <p:inputText id="lastname" value="#{studentBean.lastName}" required="true"
                          requiredMessage="Last name is required.">
-                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
                 <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
             </p:inputText>
             <p:message for="lastname" display="text"/>
-            <br/>
-            <p:outputLabel for="@next" value="Username" style="font-size: 12px;"/><br/>
-            <p:inputText id="username" value="#{studentBean.username}" required="true"
-                         requiredMessage="Username is required.">
-                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-                <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
-            </p:inputText>
-            <p:message for="username" display="text"/>
             <br/>
             <p:outputLabel for="@next" value="Email" style="font-size: 12px;"/><br/>
             <p:inputText id="email" value="#{studentBean.email}" required="true"
                          requiredMessage="Email is required." validatorMessage="Incorrect email.">
-                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
                 <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
                 <f:validateRegex pattern="^[^@]+@[^@]+\.[^@]+$"/>
             </p:inputText>
             <p:message for="email" display="text"/>
+            <br/>
+            <p:outputLabel for="@next" value="Username" style="font-size: 12px;"/><br/>
+            <p:inputText id="username" value="#{studentBean.username}" required="true"
+                         requiredMessage="Username is required.">
+                <p:ajax event="blur" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+                <p:ajax event="keyup" update="basicInfo" listener="#{studentBean.checkIfChanged()}"/>
+            </p:inputText>
+            <p:message for="username" display="text"/>
             <br/>
             <p:spacer height="30"/>
             <p:commandButton id="updateButton" value="Update" disabled="#{studentBean.buttonDisabled}"
@@ -58,6 +58,46 @@
                              update="basicInfo" oncomplete="window.location.reload();"/>
         </h:form>
         <br/>
+
+        <p:outputLabel for="@next" value="Change Password"/>
+        <h:form id="changePasswordForm">
+            <p:outputLabel for="@next" value="Current Password" style="font-size: 12px;"/><br/>
+            <p:password id="currentPassword" value="#{studentBean.currentPassword}" autocomplete="new-password"
+                        redisplay="true" toggleMask="true" feedback="false"
+                        required="true" requiredMessage="Current password is required.">
+                <p:ajax event="blur" update="changePasswordButton"/>
+            </p:password>
+            <p:message for="currentPassword" display="text"/>
+            <br/>
+            <p:outputLabel for="@next" value="New Password" style="font-size: 12px;"/><br/>
+            <p:password id="newPassword" value="#{studentBean.newPassword}" autocomplete="new-password"
+                        redisplay="true" toggleMask="true" feedback="false"
+                        required="true" requiredMessage="New password is required.">
+                <p:ajax event="blur" update="changePasswordButton"/>
+            </p:password>
+            <p:message for="newPassword" display="text"/>
+            <br/>
+            <p:spacer height="30"/>
+            <p:commandButton id="changePasswordButton" value="Save"
+                             action="#{studentBean.savePasswordChange()}"
+                             update="changePasswordForm"/>
+            <p:spacer width="10"/>
+            <p:commandButton id="resetPasswordButton" value="Reset"
+                             actionListener="#{studentBean.resetPasswordChange()}" immediate="true"
+                             update="changePasswordForm" oncomplete="window.location.reload();"/>
+            <p:dialog id="passwordChangeDialog"
+                      widgetVar="passwordChangeDialog"
+                      header="Password Change"
+                      modal="true"
+                      resizable="true"
+                      width="250"
+                      height="50">
+                <h:outputText id="passwordChangeMessage" value="#{studentBean.dialogMessage}"/>
+            </p:dialog>
+        </h:form>
+        <br/>
+
+
         <h:form id="balance">
             <p:outputLabel for="@next" value="Balance"/>
             <br/>
@@ -70,7 +110,6 @@
                 <f:selectItem itemLabel="Select amount..." itemValue=""/>
                 <f:selectItems value="#{userData.amounts}"/>
             </p:selectOneMenu>
-
         </h:form>
         <br/>
 

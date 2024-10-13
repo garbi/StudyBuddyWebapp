@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <h:outputStylesheet name="css/styles.css"/>
+    <title>
+        Register
+    </title>
+</h:head>
+<h:body>
+    <div align="center">
+        <p:panel style="width: 600px;">
+            <h:graphicImage width="180" value="/images/logo.png"/>
+            <br/>
+            <h1>Register</h1>
+        </p:panel>
+        <p:panel style="width: 600px;">
+            <h:form id="registerForm">
+                <table>
+                    <tr>
+                        <td style="text-align:right">
+                            <p:outputLabel value="Role"/>
+                        </td>
+                        <td style="text-align:center">
+                            <p:selectOneRadio id="selectUserType" value=""
+                                              required="true"
+                                              requiredMessage="You must register as student or as teacher.">
+                                <f:selectItem itemLabel="Student" itemValue="student"/>
+                                <f:selectItem itemLabel="Teacher" itemValue="teacher"/>
+                            </p:selectOneRadio>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <p:outputLabel value="First name"/>
+                        </td>
+                        <td style="text-align:left">
+                            <p:inputText id="firstname" value="Aristotle"
+                                         required="true" requiredMessage="First name is required.">
+                                <p:ajax event="blur" update="firstname"/>
+                            </p:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <p:outputLabel value="Last name"/>
+                        </td>
+                        <td style="text-align:left">
+                            <p:inputText id="lastname" value="Stagiritis"
+                                         required="true" requiredMessage="Last name is required.">
+                                <p:ajax event="blur" update="lastname"/>
+                            </p:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <p:outputLabel value="Email"/>
+                        </td>
+                        <td style="text-align:left">
+
+                            <p:inputText id="email" value="aristotle@agora.org"
+                                         required="true" requiredMessage="Email is required."
+                                         validatorMessage="Incorrect email.">
+                                <p:ajax event="blur" update="email"/>
+                                <f:validateRegex pattern="^[^@]+@[^@]+\.[^@]+$"/>
+                            </p:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <p:outputLabel value="Username"/>
+                        </td>
+                        <td style="text-align:left">
+                            <p:inputText id="username" value="aristotle"
+                                         required="true" requiredMessage="Username is required.">
+                                <p:ajax event="blur" update="username"/>
+                            </p:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:right">
+                            <p:outputLabel value="Password"/>
+                        </td>
+                        <td style="text-align:left">
+                            <p:password id="password" value="" feedback="false"
+                                        required="true" requiredMessage="Password is required.">
+                                <p:ajax event="blur" update="password"/>
+                            </p:password>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel value="Language"/>
+                        </td>
+                        <td style="text-align:left">
+                            <p:selectOneMenu id="selectLanguage" value=""
+                                             required="true"
+                                             requiredMessage="Your must choose a language.">
+                                >
+                                <f:selectItem itemLabel="Select language..." itemValue=""/>
+                                <f:selectItem itemLabel="English" itemValue="English"/>
+                                <f:selectItem itemLabel="French" itemValue="French"/>
+                                <f:selectItem itemLabel="German" itemValue="German"/>
+                                <f:selectItem itemLabel="Italian" itemValue="Italian"/>
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel value="Hourly Fee"/>
+                        </td>
+                        <td>
+                            <p:selectOneMenu id="selectHourlyFee" value=""
+                                             required="true"
+                                             requiredMessage="Your must choose an hourly fee.">
+                                <f:selectItem itemLabel="Select amount..." itemValue=""/>
+                                <f:selectItem itemLabel="25" itemValue="25"/>
+                                <f:selectItem itemLabel="50" itemValue="50"/>
+                                <f:selectItem itemLabel="75" itemValue="75"/>
+                                <f:selectItem itemLabel="100" itemValue="100"/>
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                </table>
+                <div align="left">
+                    <p:outputLabel value="Biography"/><br/>
+                    <p:inputTextarea id="biography" value="Write your biography here, emphasizing your experience as teacher..." style="margin-top: 5px"
+                                     required="true"
+                                     requiredMessage="Biography is required."
+                                     rows="5" cols="58" maxlength="200"
+                                     counter="charCounter"
+                                     counterTemplate="{0} characters remaining.">
+                    </p:inputTextarea>
+                    <h:outputText id="charCounter" style="font-size: 10px;"/>
+                </div>
+
+                <br/> <p:spacer height="30"/>
+                <p:commandButton id="registerButton" value="Register" update="growl"/>
+                <br/><p:spacer height="10"/>
+                <p:growl id="growl" showDetail="false"/>
+            </h:form>
+        </p:panel>
+    </div>
+</h:body>
+
+</html>
