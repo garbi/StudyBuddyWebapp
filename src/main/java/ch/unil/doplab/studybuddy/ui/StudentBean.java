@@ -86,7 +86,7 @@ public class StudentBean extends Student implements Serializable {
         this.newPassword = newPassword;
     }
 
-    public void savePasswordChange() {
+    public void savePasswordChange() throws Exception {
         if (Utils.checkPassword(currentPassword, theStudent.getPassword())) {
             this.setPassword(Utils.hashPassword(newPassword));
             updateStudent();
@@ -94,7 +94,7 @@ public class StudentBean extends Student implements Serializable {
             PrimeFaces.current().executeScript("PF('passwordChangeDialog').show();");
             resetPasswordChange();
         } else {
-            dialogMessage = "Your password could not be changed because the current password is incorrect.";
+            dialogMessage = "Your password could not be changed because the current password you entered is incorrect.";
             PrimeFaces.current().executeScript("PF('passwordChangeDialog').show();");
         }
     }
@@ -176,13 +176,13 @@ public class StudentBean extends Student implements Serializable {
         changed = false;
     }
 
-    public void deleteLanguage(String language) {
+    public void deleteLanguage(String language) throws Exception {
         this.removeLanguage(language);
         theStudent.removeLanguage(language);
         theService.setStudent(theStudent);
     }
 
-    public void addSelectedLanguage() {
+    public void addSelectedLanguage() throws Exception {
         if (selectedLanguage != null) {
             this.addLanguage(selectedLanguage);
             theStudent.addLanguage(selectedLanguage);
@@ -190,7 +190,7 @@ public class StudentBean extends Student implements Serializable {
         }
     }
 
-    public void addSelectedAmount() {
+    public void addSelectedAmount() throws Exception {
         if (selectedAmount > 0) {
             this.deposit(selectedAmount);
             theStudent.deposit(selectedAmount);
@@ -198,13 +198,13 @@ public class StudentBean extends Student implements Serializable {
         }
     }
 
-    public void deleteInterest(String topic) {
+    public void deleteInterest(String topic) throws Exception {
         this.removeInterest(topic);
         theStudent.removeInterest(topic);
         theService.setStudent(theStudent);
     }
 
-    public void addSelectedInterest() {
+    public void addSelectedInterest() throws Exception {
         if (selectedTopic != null && selectedLevel != null) {
             var topic = new Topic(selectedTopic, selectedLevel);
             this.addInterest(topic);
@@ -285,7 +285,7 @@ public class StudentBean extends Student implements Serializable {
     }
 
     public void cancelLesson(Lesson lesson) {
-        System.out.println("-----------------> "+ lesson.getStudentName() +" is canceling lesson on " + lesson.getTitle() + " with " + lesson.getTeacherName() + " at " + lesson.getTimeslot());
+        System.out.println("-----------------> " + lesson.getStudentName() + " is canceling lesson on " + lesson.getTitle() + " with " + lesson.getTeacherName() + " at " + lesson.getTimeslot());
         try {
             theService.cancelLesson(lesson);
             updateAffinities(lesson.getTitle());
@@ -305,10 +305,15 @@ public class StudentBean extends Student implements Serializable {
     }
 
     public void updateStudent() {
-        if (this.getUUID() != null) {
-            theService.setStudent(this);
-            theStudent = theService.getStudent(this.getUUID().toString());
-            changed = false;
+        try {
+            if (this.getUUID() != null) {
+                theService.setStudent(this);
+                theStudent = theService.getStudent(this.getUUID().toString());
+                changed = false;
+            }
+        } catch (Exception e) {
+            dialogMessage = e.getMessage();
+            PrimeFaces.current().executeScript("PF('updateErrorDialog').show();");
         }
     }
 
@@ -345,7 +350,7 @@ public class StudentBean extends Student implements Serializable {
     }
 
     public void loadAddStudentPage() {
-        if(this.getFirstName() == null) {
+        if (this.getFirstName() == null) {
             this.setFirstName("Blaise");
         }
         if (this.getLastName() == null) {

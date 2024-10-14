@@ -69,6 +69,53 @@
             <p:spacer width="10"/>
             <p:commandButton id="undoButton" value="Undo" actionListener="#{teacherBean.undoChanges()}" immediate="true"
                              update="basicInfo" oncomplete="window.location.reload();"/>
+            <p:dialog id="updateErrorDialog"
+                      widgetVar="updateErrorDialog"
+                      header="Update impossible"
+                      modal="true"
+                      resizable="true"
+                      width="250"
+                      height="50">
+                <h:outputText id="updateErrorMessage" value="#{teacherBean.dialogMessage}"/>
+            </p:dialog>
+        </h:form>
+        <br/>
+
+        <p:outputLabel for="@next" value="Change Password"/>
+        <h:form id="changePasswordForm">
+            <p:outputLabel for="@next" value="Current Password" style="font-size: 12px;"/><br/>
+            <p:password id="currentPassword" value="#{teacherBean.currentPassword}" autocomplete="new-password"
+                        redisplay="true" toggleMask="true" feedback="false"
+                        required="true" requiredMessage="Current password is required.">
+                <p:ajax event="blur" update="changePasswordButton"/>
+            </p:password>
+            <p:message for="currentPassword" display="text"/>
+            <br/>
+            <p:outputLabel for="@next" value="New Password" style="font-size: 12px;"/><br/>
+            <p:password id="newPassword" value="#{teacherBean.newPassword}" autocomplete="new-password"
+                        redisplay="true" toggleMask="true" feedback="false"
+                        required="true" requiredMessage="New password is required.">
+                <p:ajax event="blur" update="changePasswordButton"/>
+            </p:password>
+            <p:message for="newPassword" display="text"/>
+            <br/>
+            <p:spacer height="30"/>
+            <p:commandButton id="changePasswordButton" value="Save"
+                             action="#{teacherBean.savePasswordChange()}"
+                             update="changePasswordForm"/>
+            <p:spacer width="10"/>
+            <p:commandButton id="resetPasswordButton" value="Reset"
+                             actionListener="#{teacherBean.resetPasswordChange()}" immediate="true"
+                             update="changePasswordForm" oncomplete="window.location.reload();"/>
+            <p:dialog id="passwordChangeDialog"
+                      widgetVar="passwordChangeDialog"
+                      header="Password Change"
+                      modal="true"
+                      resizable="true"
+                      width="250"
+                      height="50">
+                <h:outputText id="passwordChangeMessage" value="#{teacherBean.dialogMessage}"/>
+            </p:dialog>
         </h:form>
 
         <p>

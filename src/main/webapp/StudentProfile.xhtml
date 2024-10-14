@@ -56,6 +56,15 @@
             <p:spacer width="10"/>
             <p:commandButton id="undoButton" value="Undo" actionListener="#{studentBean.undoChanges()}" immediate="true"
                              update="basicInfo" oncomplete="window.location.reload();"/>
+            <p:dialog id="updateErrorDialog"
+                      widgetVar="updateErrorDialog"
+                      header="Update impossible"
+                      modal="true"
+                      resizable="true"
+                      width="250"
+                      height="50">
+                <h:outputText id="updateErrorMessage" value="#{studentBean.dialogMessage}"/>
+            </p:dialog>
         </h:form>
         <br/>
 
@@ -96,7 +105,6 @@
             </p:dialog>
         </h:form>
         <br/>
-
 
         <h:form id="balance">
             <p:outputLabel for="@next" value="Balance"/>

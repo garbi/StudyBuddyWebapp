@@ -58,12 +58,17 @@ public class StudyBuddyService {
         return student;
     }
 
-    public boolean setStudent(Student student) {
+    public boolean setStudent(Student student) throws Exception {
         var response = studentTarget
                 .path(student.getUUID().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.entity(student, MediaType.APPLICATION_JSON));
-        return response.getStatus() == 200;
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.getStatus() == 200;
+        } else {
+            ExceptionDescription description = response.readEntity(ExceptionDescription.class);
+            throw Utils.buildException(description);
+        }
     }
 
     public List<Student> getAllStudents() {
@@ -116,12 +121,18 @@ public class StudyBuddyService {
     }
 
 
-    public boolean setTeacher(Teacher teacher) {
+    public boolean setTeacher(Teacher teacher) throws Exception {
         var response = teacherTarget
                 .path(teacher.getUUID().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.entity(teacher, MediaType.APPLICATION_JSON));
-        return response.getStatus() == 200;
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.getStatus() == 200;
+        } else {
+            ExceptionDescription description = response.readEntity(ExceptionDescription.class);
+            throw Utils.buildException(description);
+        }
     }
 
 

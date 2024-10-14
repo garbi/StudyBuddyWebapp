@@ -22,6 +22,8 @@ public class TeacherBean extends Teacher implements Serializable {
     // Field theTeacher always contains the current teacher as know on the server
     // so that we can compare it with the current teacher in the form
     private Teacher theTeacher;
+    private String currentPassword;
+    private String newPassword;
     private int selectedAmount;
     private int selectedHourlyFee;
     private String selectedLanguage;
@@ -32,7 +34,7 @@ public class TeacherBean extends Teacher implements Serializable {
     private LocalDateTime selectedTimeslot;
     private boolean changed;
     private boolean addCoursePossible;
-    private String errorMessage;
+    private String dialogMessage;
 
     @Inject
     StudyBuddyService theService;
@@ -50,6 +52,8 @@ public class TeacherBean extends Teacher implements Serializable {
 
     public void init() {
         theTeacher = null;
+        currentPassword = null;
+        newPassword = null;
         selectedAmount = 0;
         selectedHourlyFee = defaultHourlyRate;
         selectedLanguage = null;
@@ -60,7 +64,41 @@ public class TeacherBean extends Teacher implements Serializable {
         selectedTimeslot = null;
         changed = false;
         addCoursePossible = false;
-        errorMessage = null;
+        dialogMessage = null;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public void savePasswordChange() {
+        if (Utils.checkPassword(currentPassword, theTeacher.getPassword())) {
+            this.setPassword(Utils.hashPassword(newPassword));
+            updateTeacher();
+            dialogMessage = "Your password was successfully changed.";
+            PrimeFaces.current().executeScript("PF('passwordChangeDialog').show();");
+            resetPasswordChange();
+        } else {
+            dialogMessage = "Your password could not be changed because the current password you entered is incorrect.";
+            PrimeFaces.current().executeScript("PF('passwordChangeDialog').show();");
+        }
+    }
+
+    public void resetPasswordChange() {
+        currentPassword = null;
+        newPassword = null;
     }
 
     public void loadTeacher() {
@@ -81,10 +119,15 @@ public class TeacherBean extends Teacher implements Serializable {
     }
 
     public void updateTeacher() {
-        if (this.getUUID() != null) {
-            theService.setTeacher(this);
-            theTeacher = theService.getTeacher(this.getUUID().toString());
-            changed = false;
+        try {
+            if (this.getUUID() != null) {
+                theService.setTeacher(this);
+                theTeacher = theService.getTeacher(this.getUUID().toString());
+                changed = false;
+            }
+        } catch (Exception e) {
+            dialogMessage = e.getMessage();
+            PrimeFaces.current().executeScript("PF('updateErrorDialog').show();");
         }
     }
 
@@ -95,8 +138,8 @@ public class TeacherBean extends Teacher implements Serializable {
         }
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getDialogMessage() {
+        return dialogMessage;
     }
 
     public void setId(String id) {
@@ -137,7 +180,7 @@ public class TeacherBean extends Teacher implements Serializable {
         this.selectedAmount = selectedAmount;
     }
 
-    public void addSelectedAmount() {
+    public void addSelectedAmount() throws Exception{
         if (selectedAmount > 0) {
             this.deposit(selectedAmount);
             theTeacher.deposit(selectedAmount);
@@ -153,7 +196,7 @@ public class TeacherBean extends Teacher implements Serializable {
         this.selectedHourlyFee = selectedHourlyFee;
     }
 
-    public void saveHourlyFee() {
+    public void saveHourlyFee() throws Exception {
         if (selectedHourlyFee != this.getHourlyFee()) {
             this.setHourlyFee(selectedHourlyFee);
             theTeacher.setHourlyFee(selectedHourlyFee);
@@ -169,7 +212,7 @@ public class TeacherBean extends Teacher implements Serializable {
         this.selectedLanguage = selectedLanguage;
     }
 
-    public void addSelectedLanguage() {
+    public void addSelectedLanguage() throws Exception {
         if (selectedLanguage != null) {
             this.addLanguage(selectedLanguage);
             theTeacher.addLanguage(selectedLanguage);
@@ -200,6 +243,7 @@ public class TeacherBean extends Teacher implements Serializable {
     public String getSelectedDescription() {
         return selectedDescription;
     }
+
     public void setSelectedDescription(String selectedDescription) {
         this.selectedDescription = selectedDescription;
     }
@@ -220,7 +264,7 @@ public class TeacherBean extends Teacher implements Serializable {
         this.addCourseButtonName = addCourseButtonName;
     }
 
-    public void addSelectedCourse() {
+    public void addSelectedCourse() throws Exception {
         if (addCoursePossible) {
             var topic = new Topic(selectedTopic, selectedDescription, EnumSet.copyOf(selectedLevels));
             this.addCourse(topic);
@@ -230,7 +274,7 @@ public class TeacherBean extends Teacher implements Serializable {
         }
     }
 
-    public void deleteCourse(String topic) {
+    public void deleteCourse(String topic) throws Exception{
         this.removeCourse(topic);
         theTeacher.removeCourse(topic);
         theService.setTeacher(theTeacher);
@@ -255,19 +299,19 @@ public class TeacherBean extends Teacher implements Serializable {
         this.selectedTimeslot = timeslot;
     }
 
-    public void addSelectedTimeslot() {
+    public void addSelectedTimeslot() throws Exception{
         this.addTimeslot(selectedTimeslot);
         theTeacher.addTimeslot(selectedTimeslot);
         theService.setTeacher(theTeacher);
     }
 
-    public void deleteTimeslot(LocalDateTime timeslot) {
+    public void deleteTimeslot(LocalDateTime timeslot) throws Exception{
         this.removeTimeslot(timeslot);
         theTeacher.removeTimeslot(timeslot);
         theService.setTeacher(theTeacher);
     }
 
-    public void deleteLanguage(String language) {
+    public void deleteLanguage(String language) throws Exception {
         this.removeLanguage(language);
         theTeacher.removeLanguage(language);
         theService.setTeacher(theTeacher);
@@ -286,7 +330,7 @@ public class TeacherBean extends Teacher implements Serializable {
     }
 
     public void loadAddTeacherPage() {
-        if(this.getFirstName() == null) {
+        if (this.getFirstName() == null) {
             this.setFirstName("Aristotle");
         }
         if (this.getLastName() == null) {
@@ -306,7 +350,7 @@ public class TeacherBean extends Teacher implements Serializable {
             theService.cancelLesson(lesson);
             loadTeacher();
         } catch (Exception e) {
-            errorMessage = e.getMessage();
+            dialogMessage = e.getMessage();
             PrimeFaces.current().executeScript("PF('cancellationErrorDialog').show();");
         }
     }
