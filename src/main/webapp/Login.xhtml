@@ -29,7 +29,8 @@
                             <p:outputLabel value="Username"/>
                         </td>
                         <td style="text-align:left">
-                            <p:inputText id="username" value=""
+                            <p:inputText id="username" value="#{loginBean.username}"
+                                         style="width: 300px" autocomplete="new-username"
                                          required="true" requiredMessage="Username is required.">
                                 <p:ajax event="blur" update="username"/>
                             </p:inputText>
@@ -40,7 +41,9 @@
                             <p:outputLabel value="Password"/>
                         </td>
                         <td style="text-align:left">
-                            <p:password id="password" value=""
+                            <p:password id="password" value="#{loginBean.password}"
+                                        style="width: 300px" autocomplete="new-password"
+                                        redisplay="true" toggleMask="true" feedback="false"
                                         required="true" requiredMessage="Password is required.">
                                 <p:ajax event="blur" update="password"/>
                             </p:password>
@@ -49,7 +52,7 @@
                     <tr>
                         <td></td>
                         <td style="text-align:center">
-                            <p:selectOneRadio id="selectUserType" value=""
+                            <p:selectOneRadio id="selectUserRole" value="#{loginBean.role}"
                                               required="true"
                                               requiredMessage="You must login as student or as teacher.">
                             <f:selectItem itemLabel="Student" itemValue="student"/>
@@ -60,7 +63,8 @@
                     <tr>
                         <td></td>
                         <td style="text-align:center; height:50px">
-                            <p:commandButton id="loginButton" value="Login" update="growl"/>
+                            <p:commandButton id="loginButton" value="Login" action="#{loginBean.login}"
+                                             oncomplete="#{loginBean.reset()}" update="growl"/>
                         </td>
                     </tr>
                 </table>

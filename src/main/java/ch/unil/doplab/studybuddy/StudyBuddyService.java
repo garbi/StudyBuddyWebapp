@@ -223,4 +223,15 @@ public class StudyBuddyService {
             throw Utils.buildException(description);
         }
     }
+
+    public UUID authenticate(String username, String password, String role) {
+        var response = serviceTarget
+                .path("authenticate")
+                .path(username)
+                .path(password)
+                .path(role)
+                .request(MediaType.APPLICATION_JSON)
+                .get(UUID.class);
+        return response;
+    }
 }

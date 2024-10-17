@@ -14,7 +14,7 @@
     <ui:define name = "menu">
         <h:link outcome="TeacherTeaching" value="Teaching"/>
         <h:link outcome="TeacherProfile" value="Profile"/>
-        <a href="#logout">Logout</a>
+        <p:commandLink value="Logout" action="#{loginBean.logout}" process="@this" />
     </ui:define>
 
     <ui:define name="section-title">Teacher Section Title</ui:define>
