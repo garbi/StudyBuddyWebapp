@@ -1,5 +1,6 @@
 package ch.unil.doplab.studybuddy.ui;
 
+import ch.unil.doplab.studybuddy.domain.Utils;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -14,13 +15,22 @@ import java.io.IOException;
 
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"*.xhtml"})
 public class AuthenticationFilter implements Filter {
+    {
+        Utils.testModeOff();
+    }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+        String requestURI = req.getRequestURI();
+
+        if (Utils.testMode() || requestURI.startsWith(req.getContextPath() + "/resources/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
-        String requestURI = req.getRequestURI();
         boolean sessionExists = session != null;
         boolean validRequest = sessionExists && session.getAttribute("uuid") != null && session.getAttribute("username") != null;
 

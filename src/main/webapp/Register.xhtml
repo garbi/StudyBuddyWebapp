@@ -28,11 +28,12 @@
                             <p:outputLabel value="Role"/>
                         </td>
                         <td style="text-align:center">
-                            <p:selectOneRadio id="selectUserRole" value=""
+                            <p:selectOneRadio id="selectUserRole" value="#{registerBean.role}"
                                               required="true"
                                               requiredMessage="You must register as student or as teacher.">
-                                <f:selectItem itemLabel="Student" itemValue="student"/>
-                                <f:selectItem itemLabel="Teacher" itemValue="teacher"/>
+                                <f:selectItem itemLabel="Student" itemValue="#{userData.studentRole}"/>
+                                <f:selectItem itemLabel="Teacher" itemValue="#{userData.teacherRole}"/>
+                                <p:ajax update="@form" />
                             </p:selectOneRadio>
                         </td>
                     </tr>
@@ -41,7 +42,7 @@
                             <p:outputLabel value="First name"/>
                         </td>
                         <td style="text-align:left">
-                            <p:inputText id="firstname" value="Aristotle"
+                            <p:inputText id="firstname" value="#{registerBean.firstName}" style="width: 300px"
                                          required="true" requiredMessage="First name is required.">
                                 <p:ajax event="blur" update="firstname"/>
                             </p:inputText>
@@ -52,7 +53,7 @@
                             <p:outputLabel value="Last name"/>
                         </td>
                         <td style="text-align:left">
-                            <p:inputText id="lastname" value="Stagiritis"
+                            <p:inputText id="lastname" value="#{registerBean.lastName}" style="width: 300px"
                                          required="true" requiredMessage="Last name is required.">
                                 <p:ajax event="blur" update="lastname"/>
                             </p:inputText>
@@ -64,7 +65,7 @@
                         </td>
                         <td style="text-align:left">
 
-                            <p:inputText id="email" value="aristotle@agora.org"
+                            <p:inputText id="email" value="#{registerBean.email}" style="width: 300px"
                                          required="true" requiredMessage="Email is required."
                                          validatorMessage="Incorrect email.">
                                 <p:ajax event="blur" update="email"/>
@@ -77,7 +78,7 @@
                             <p:outputLabel value="Username"/>
                         </td>
                         <td style="text-align:left">
-                            <p:inputText id="username" value="aristotle"
+                            <p:inputText id="username" value="#{registerBean.username}" style="width: 300px"
                                          required="true" requiredMessage="Username is required.">
                                 <p:ajax event="blur" update="username"/>
                             </p:inputText>
@@ -88,7 +89,8 @@
                             <p:outputLabel value="Password"/>
                         </td>
                         <td style="text-align:left">
-                            <p:password id="password" value="" feedback="false"
+                            <p:password id="password" value="#{registerBean.password}" style="width: 300px"
+                                        redisplay="true" toggleMask="true" feedback="false"
                                         required="true" requiredMessage="Password is required.">
                                 <p:ajax event="blur" update="password"/>
                             </p:password>
@@ -99,52 +101,58 @@
                             <p:outputLabel value="Language"/>
                         </td>
                         <td style="text-align:left">
-                            <p:selectOneMenu id="selectLanguage" value=""
-                                             required="true"
+                            <p:selectOneMenu id="selectLanguage" value="#{registerBean.language}"
+                                             style="width: 200px" required="true"
                                              requiredMessage="Your must choose a language.">
-                                >
                                 <f:selectItem itemLabel="Select language..." itemValue=""/>
-                                <f:selectItem itemLabel="English" itemValue="English"/>
-                                <f:selectItem itemLabel="French" itemValue="French"/>
-                                <f:selectItem itemLabel="German" itemValue="German"/>
-                                <f:selectItem itemLabel="Italian" itemValue="Italian"/>
+                                <f:selectItems value="#{userData.languages}"/>
                             </p:selectOneMenu>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <p:outputLabel value="Hourly Fee"/>
+                            <p:outputLabel value="Hourly Fee" rendered="#{registerBean.teacherSelected}"/>
                         </td>
                         <td>
-                            <p:selectOneMenu id="selectHourlyFee" value=""
-                                             required="true"
+                            <p:selectOneMenu id="selectHourlyFee" value="#{registerBean.teacherHourlyFee}"
+                                             rendered="#{registerBean.teacherSelected}" style="width: 200px"
+                                             required="#{registerBean.teacherSelected}"
                                              requiredMessage="Your must choose an hourly fee.">
                                 <f:selectItem itemLabel="Select amount..." itemValue=""/>
-                                <f:selectItem itemLabel="25" itemValue="25"/>
-                                <f:selectItem itemLabel="50" itemValue="50"/>
-                                <f:selectItem itemLabel="75" itemValue="75"/>
-                                <f:selectItem itemLabel="100" itemValue="100"/>
+                                <f:selectItems value="#{userData.hourlyFees}"/>
+                                <p:ajax update="selectHourlyFee" />
                             </p:selectOneMenu>
                         </td>
                     </tr>
                 </table>
                 <div align="left">
-                    <p:outputLabel value="Biography"/><br/>
-                    <p:inputTextarea id="biography" value="Write your biography here, emphasizing your experience as teacher..." style="margin-top: 5px"
-                                     required="true"
+                    <p:outputLabel value="Biography" rendered="#{registerBean.teacherSelected}"/><br/>
+                    <p:inputTextarea id="biography" value="#{registerBean.teacherBiography}"
+                                     rendered="#{registerBean.teacherSelected}" style="margin-top: 5px"
+                                     required="#{registerBean.teacherSelected}"
                                      requiredMessage="Biography is required."
                                      rows="5" cols="58" maxlength="200"
                                      counter="charCounter"
                                      counterTemplate="{0} characters remaining.">
+                        <p:ajax update="biography" />
                     </p:inputTextarea>
                     <h:outputText id="charCounter" style="font-size: 10px;"/>
                 </div>
 
                 <br/> <p:spacer height="30"/>
-                <p:commandButton id="registerButton" value="Register" update="growl"/>
+                <p:commandButton id="registerButton" value="Register"  action="#{registerBean.register}"
+                                 update="growl"/>
                 <br/><p:spacer height="10"/>
                 <p:growl id="growl" showDetail="false"/>
             </h:form>
+        </p:panel>
+    </div>
+    <div align="center">
+        <p:panel style="width: 600px;">
+            <div align="left">
+                <h:outputText value="Already have an account? "/>
+                <p:link value="Login Now" outcome="Login.xhtml"/>
+            </div>
         </p:panel>
     </div>
 </h:body>

@@ -60,8 +60,7 @@ public class LoginBean implements Serializable {
         }
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Invalid login",
-                        "Please check your username and password."));
+                        "Invalid login", null));
         reset();
         return "Login";
     }

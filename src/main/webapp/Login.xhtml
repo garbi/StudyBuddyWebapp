@@ -55,8 +55,8 @@
                             <p:selectOneRadio id="selectUserRole" value="#{loginBean.role}"
                                               required="true"
                                               requiredMessage="You must login as student or as teacher.">
-                            <f:selectItem itemLabel="Student" itemValue="student"/>
-                            <f:selectItem itemLabel="Teacher" itemValue="teacher"/>
+                                <f:selectItem itemLabel="Student" itemValue="#{userData.studentRole}"/>
+                                <f:selectItem itemLabel="Teacher" itemValue="#{userData.teacherRole}"/>
                             </p:selectOneRadio>
                         </td>
                     </tr>
@@ -70,6 +70,14 @@
                 </table>
                 <p:growl id="growl" showDetail="false"/>
             </h:form>
+        </p:panel>
+    </div>
+    <div align="center">
+        <p:panel style="width: 600px;">
+            <div align="left">
+                <h:outputText value="Don't have an account? "/>
+                <p:link value="Sign Up Now" outcome="Register.xhtml"/>
+            </div>
         </p:panel>
     </div>
 </h:body>

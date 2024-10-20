@@ -30,6 +30,10 @@ public class StudyBuddyService {
         serviceTarget = client.target(BASE_URL).path("service");
     }
 
+    /*
+     * Service operations
+     */
+
     public void resetService() {
         String response = serviceTarget
                 .path("reset")
@@ -79,17 +83,20 @@ public class StudyBuddyService {
         return students;
     }
 
-    public Student addStudent(Student student) {
+    public Student addStudent(Student student) throws Exception {
         student.setUUID(null);  // To make sure the id is not set and avoid bug related to ill-formed UUID on server side
         var response = studentTarget
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(student, MediaType.APPLICATION_JSON));
-        Student newlyCreatedStudent = null;
+
         if (response.getStatus() == 200 && response.hasEntity()) {
-            newlyCreatedStudent = response.readEntity(Student.class);
+            var newlyCreatedStudent = response.readEntity(Student.class);
             student.setUUID(newlyCreatedStudent.getUUID());
+            return newlyCreatedStudent;
+        } else {
+            ExceptionDescription description = response.readEntity(ExceptionDescription.class);
+            throw Utils.buildException(description);
         }
-        return newlyCreatedStudent;
     }
 
     public boolean deleteStudent(String id) {
@@ -134,7 +141,6 @@ public class StudyBuddyService {
             throw Utils.buildException(description);
         }
     }
-
 
     public Teacher addTeacher(Teacher teacher) {
         teacher.setUUID(null);  // To make sure the id is not set and avoid bug related to ill-formed UUID on server side

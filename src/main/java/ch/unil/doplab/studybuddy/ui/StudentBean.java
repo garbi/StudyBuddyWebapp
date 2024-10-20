@@ -318,11 +318,16 @@ public class StudentBean extends Student implements Serializable {
     }
 
     public void addStudent() {
-        var student = theService.addStudent(theStudent);
-        if (student != null) {
-            theStudent = student;
-            this.replaceWith(theStudent);
-            changed = false;
+        try {
+            var student = theService.addStudent(theStudent);
+            if (student != null) {
+                theStudent = student;
+                this.replaceWith(theStudent);
+                changed = false;
+            }
+        } catch (Exception e) {
+            dialogMessage = e.getMessage();
+            PrimeFaces.current().executeScript("PF('updateErrorDialog').show();");
         }
     }
 

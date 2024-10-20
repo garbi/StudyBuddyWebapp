@@ -1,13 +1,8 @@
 package ch.unil.doplab.studybuddy.ui;
 
 import ch.unil.doplab.studybuddy.StudyBuddyService;
-import ch.unil.doplab.studybuddy.domain.Level;
-import ch.unil.doplab.studybuddy.domain.Student;
-import ch.unil.doplab.studybuddy.domain.Rating;
-import ch.unil.doplab.studybuddy.domain.Teacher;
-import jakarta.ejb.Local;
+import ch.unil.doplab.studybuddy.domain.*;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -20,7 +15,6 @@ import java.util.stream.Stream;
 @ApplicationScoped
 @Named
 public class UserData implements java.io.Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @Inject
@@ -45,6 +39,14 @@ public class UserData implements java.io.Serializable {
         this.hourlyFees = new TreeSet<>(Arrays.asList(25, 50, 75, 100));
         System.out.println("UserData created: " + this.hashCode());
         ratings = Stream.of(Rating.values()).collect(Collectors.toList());
+    }
+
+    public String getStudentRole() {
+        return Utils.studentRole;
+    }
+
+    public String getTeacherRole() {
+        return Utils.teacherRole;
     }
 
     public Set<String> getLanguages() {
