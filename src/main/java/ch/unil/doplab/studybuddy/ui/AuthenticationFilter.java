@@ -24,7 +24,8 @@ public class AuthenticationFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String requestURI = req.getRequestURI();
 
-        if (Utils.testMode() || requestURI.startsWith(req.getContextPath() + "/resources/")) {
+//        if (Utils.testMode() || requestURI.startsWith(req.getContextPath() + "/resources/")) {
+         if (Utils.testMode() || requestURI.contains("resource")) {
             chain.doFilter(request, response);
             return;
         }
