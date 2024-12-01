@@ -51,8 +51,16 @@ public class RegisterBean implements Serializable {
         teacherBiography = "Write your biography here, emphasizing your experience as teacher...";
     }
 
+    private void trimFields() {
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        email = email.trim();
+        username = username.trim();
+    }
+
     public String register() {
         LoginBean.invalidateSession();
+        trimFields();
         var hashedPassword = Utils.hashPassword(password);
         String errorMessage = null;
 
