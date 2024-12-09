@@ -40,6 +40,10 @@ public class StudentBean extends Student implements Serializable {
     @Inject
     StudyBuddyService theService;
 
+    @Named
+    @Inject
+    private LoginBean loginBean;
+
     public StudentBean() {
         this(null, null, null, null, null, null);
     }
@@ -368,5 +372,10 @@ public class StudentBean extends Student implements Serializable {
             this.setUsername("blaise");
         }
         theStudent.replaceWith(this);
+    }
+
+    public String deleteAccount() {
+        deleteStudent();
+        return loginBean.logout();
     }
 }

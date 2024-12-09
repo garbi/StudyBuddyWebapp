@@ -175,6 +175,21 @@
                 <f:selectItems value="#{userData.languages}"/>
             </p:selectOneMenu>
         </h:form>
+        <br/>
+
+        <h:form>
+            <p:commandButton value="Delete account" onclick="PF('confirmDialog').show();" />
+            <p:confirmDialog widgetVar="confirmDialog"
+                             message="Are you sure you want to delete your teacher account?"
+                             header="Confirmation"
+                             severity="warn"
+                             showEffect="fade"
+                             hideEffect="fade">
+                <p:commandButton value="Yes" action="#{teacherBean.deleteAccount}" ajax="false" />
+                <p:commandButton value="No" onclick="PF('confirmDialog').hide();" type="button" />
+            </p:confirmDialog>
+        </h:form>
+
     </ui:define>
 
 </ui:composition>

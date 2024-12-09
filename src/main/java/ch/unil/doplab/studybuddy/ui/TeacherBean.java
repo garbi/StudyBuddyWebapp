@@ -39,6 +39,9 @@ public class TeacherBean extends Teacher implements Serializable {
     @Inject
     StudyBuddyService theService;
 
+    @Named
+    @Inject
+    private LoginBean loginBean;
 
     public TeacherBean() {
         this(null, null, null, null, null, null);
@@ -354,4 +357,10 @@ public class TeacherBean extends Teacher implements Serializable {
             PrimeFaces.current().executeScript("PF('cancellationErrorDialog').show();");
         }
     }
+
+    public String deleteAccount() {
+        deleteTeacher();
+        return loginBean.logout();
+    }
+
 }
